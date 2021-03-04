@@ -55,7 +55,14 @@ export class TestRail {
       }),
     })
       .then(response => {
-        console.log(chalk.magenta.bold(`Testrail run id ${response.data.id} successfully created.`))
+        console.log(chalk.magenta(`  _______        _   _____         _ `));
+        console.log(chalk.magenta(` |__   __|      | | |  __ \\     (_) |`));
+        console.log(chalk.magenta(`    | | ___  ___| |_| |__) |__ _ _| |`));
+        console.log(chalk.magenta("    | |/ _ \\/ __| __|  _  /  _  | | |"));
+        console.log(chalk.magenta(`    | |  __/\\__ \\ |_| | \\ \\ (_| | | |`));
+        console.log(chalk.magenta(`    |_|\\___||___/\\__|_|  \\_\\__,_|_|_|`));
+
+        console.log(chalk.magenta.bold(`Testrail reporter: Run with id ${response.data.id} successfully created`))
         this.runId = response.data.id;
       })
       .catch(error => console.error(error));
@@ -71,7 +78,7 @@ export class TestRail {
         password: this.options.password,
       },
     }).then(() => {
-      console.log(chalk.magenta.bold(`Testrail run successfully deleted.`));
+      console.log(chalk.magenta.bold(`Testrail reporter: Run successfully deleted`));
     }).catch(error => console.error(error));
   }
 
@@ -87,9 +94,9 @@ export class TestRail {
       data: JSON.stringify({ results }),
     })
       .then(response => {
-        console.log('\n', chalk.magenta.bold(`TestRail Reporter wrote outcome for:`));
+        console.log('\n', chalk.magenta.bold(`Testrail reporter: Outcome of following test cases saved in TestRail run with id:${this.runId}`));
         results.forEach(result => { 
-          console.log(chalk.magenta(`${result.case_id} with status id: ${result.status_id}`))
+          console.log(chalk.magenta(`Test case ${result.case_id} with status id: ${result.status_id}`))
         });
         console.log('\n');
       })
@@ -106,7 +113,7 @@ export class TestRail {
         password: this.options.password,
       },
     })
-      .then(() => console.log(chalk.magenta.bold('Test run closed successfully')))
+      .then(() => console.log(chalk.magenta.bold(`Testrail reporter: Run with id ${this.runId} closed successfully`)))
       .catch(error => console.error(error));
   }
 }
