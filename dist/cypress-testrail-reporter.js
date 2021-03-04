@@ -18,6 +18,7 @@ const testrail_interface_1 = require("./testrail.interface");
 class CypressTestRailReporter extends mocha_1.reporters.Spec {
     constructor(runner, options) {
         super(runner);
+        this.resultsPushPromises = [];
         let reporterOptions = options.reporterOptions;
         if (process.env.CYPRESS_TESTRAIL_REPORTER_PASSWORD) {
             reporterOptions.password = process.env.CYPRESS_TESTRAIL_REPORTER_PASSWORD;

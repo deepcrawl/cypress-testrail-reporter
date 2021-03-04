@@ -6,7 +6,7 @@ import { Status } from './testrail.interface';
 import { AxiosResponse } from 'axios';
 
 export class CypressTestRailReporter extends reporters.Spec {
-  private resultsPushPromises: Promise<AxiosResponse<any>>[];
+  private resultsPushPromises: Promise<AxiosResponse<any>>[] = [];
   private testRail: TestRail;
 
   constructor(runner: any, options: any) {
