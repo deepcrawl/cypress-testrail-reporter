@@ -23,11 +23,17 @@ export class CypressTestRailReporter extends reporters.Spec {
     this.validate(reporterOptions, 'projectId');
     this.validate(reporterOptions, 'suiteId');
 
+    const executionDateTime = moment().format('MMM Do YYYY, HH:mm (Z)');
+    const name = `${reporterOptions.runName || 'Automated test run'} ${executionDateTime}`;
+    const description = 'For the Cypress run visit https://dashboard.cypress.io/#/projects/runs';
+    this.testRail.createRun(name, description);
+  
+
     runner.on('start', async () => {
-      const executionDateTime = moment().format('MMM Do YYYY, HH:mm (Z)');
-      const name = `${reporterOptions.runName || 'Automated test run'} ${executionDateTime}`;
-      const description = 'For the Cypress run visit https://dashboard.cypress.io/#/projects/runs';
-      return this.testRail.createRun(name, description);
+      // const executionDateTime = moment().format('MMM Do YYYY, HH:mm (Z)');
+      // const name = `${reporterOptions.runName || 'Automated test run'} ${executionDateTime}`;
+      // const description = 'For the Cypress run visit https://dashboard.cypress.io/#/projects/runs';
+      // return this.testRail.createRun(name, description);
     });
 
     runner.on('pass', async (test) => {
@@ -77,7 +83,7 @@ export class CypressTestRailReporter extends reporters.Spec {
     });
 
     runner.on('end', async () => {
-      await this.testRail.closeRun();
+      // await this.testRail.closeRun(); // do we want to close runs? 
     });
   }
 

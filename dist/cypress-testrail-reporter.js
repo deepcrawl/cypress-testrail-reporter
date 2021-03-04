@@ -28,11 +28,15 @@ class CypressTestRailReporter extends mocha_1.reporters.Spec {
         this.validate(reporterOptions, 'password');
         this.validate(reporterOptions, 'projectId');
         this.validate(reporterOptions, 'suiteId');
+        const executionDateTime = moment().format('MMM Do YYYY, HH:mm (Z)');
+        const name = `${reporterOptions.runName || 'Automated test run'} ${executionDateTime}`;
+        const description = 'For the Cypress run visit https://dashboard.cypress.io/#/projects/runs';
+        this.testRail.createRun(name, description);
         runner.on('start', () => __awaiter(this, void 0, void 0, function* () {
-            const executionDateTime = moment().format('MMM Do YYYY, HH:mm (Z)');
-            const name = `${reporterOptions.runName || 'Automated test run'} ${executionDateTime}`;
-            const description = 'For the Cypress run visit https://dashboard.cypress.io/#/projects/runs';
-            return this.testRail.createRun(name, description);
+            // const executionDateTime = moment().format('MMM Do YYYY, HH:mm (Z)');
+            // const name = `${reporterOptions.runName || 'Automated test run'} ${executionDateTime}`;
+            // const description = 'For the Cypress run visit https://dashboard.cypress.io/#/projects/runs';
+            // return this.testRail.createRun(name, description);
         }));
         runner.on('pass', (test) => __awaiter(this, void 0, void 0, function* () {
             const caseIds = shared_1.titleToCaseIds(test.title);
@@ -77,7 +81,7 @@ class CypressTestRailReporter extends mocha_1.reporters.Spec {
             }
         }));
         runner.on('end', () => __awaiter(this, void 0, void 0, function* () {
-            yield this.testRail.closeRun();
+            // await this.testRail.closeRun(); // do we want to close runs? 
         }));
     }
     validate(options, name) {
