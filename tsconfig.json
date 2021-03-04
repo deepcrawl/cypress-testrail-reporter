@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "ES5",
+    "target": "ES6",
     "module": "commonjs",
     "moduleResolution": "node",
     "sourceMap": true,
@@ -11,7 +11,7 @@
     "pretty": true,
     "outDir": "dist",
     "typeRoots": ["node_modules/@types"],
-    "lib": [ "es2017", "dom" ]
+    "lib": [ "dom", "ES2020" ]
   },
   "exclude": [
     "node_modules",

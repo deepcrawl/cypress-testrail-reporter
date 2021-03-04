@@ -55,6 +55,7 @@ export class TestRail {
       }),
     })
       .then(response => {
+        console.log(`Testrail run id ${response.data.id} successfully created.`)
         this.runId = response.data.id;
       })
       .catch(error => console.error(error));
@@ -69,6 +70,8 @@ export class TestRail {
         username: this.options.username,
         password: this.options.password,
       },
+    }).then(() => {
+      console.log(`Testrail run successfully deleted.`);
     }).catch(error => console.error(error));
   }
 
@@ -84,12 +87,11 @@ export class TestRail {
       data: JSON.stringify({ results }),
     })
       .then(response => {
-        console.log('\n', chalk.magenta.underline.bold('(TestRail Reporter)'));
+        const consoleMessages = results.map(result => `${result.case_id} with status id: ${result.status_id}`);
         console.log(
-          '\n',
-          ` - Results are published to ${chalk.magenta(
-            `${this.options.host}/index.php?/runs/view/${this.runId}`
-          )}`,
+          '\n', 
+          chalk.magenta.underline.bold(`TestRail Reporter wrote outcome for:`),
+          consoleMessages.join('\n'),
           '\n'
         );
       })

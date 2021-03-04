@@ -2,11 +2,11 @@ import { reporters } from 'mocha';
 import * as moment from 'moment';
 import { TestRail } from './testrail';
 import { titleToCaseIds } from './shared';
-import { Status, TestRailResult } from './testrail.interface';
+import { Status } from './testrail.interface';
 const chalk = require('chalk');
 
 export class CypressTestRailReporter extends reporters.Spec {
-  private results: TestRailResult[] = [];
+  // private results: TestRailResult[] = [];
   private testRail: TestRail;
 
   constructor(runner: any, options: any) {
@@ -43,7 +43,8 @@ export class CypressTestRailReporter extends reporters.Spec {
             elapsed: `${test.duration/1000}s`
           };
         });
-        this.results.push(...results);
+        return this.testRail.publishResults(results);
+        // this.results.push(...results);
       }
     });
 
@@ -57,26 +58,30 @@ export class CypressTestRailReporter extends reporters.Spec {
             comment: `${test.err.message}`,
           };
         });
-        this.results.push(...results);
+        return this.testRail.publishResults(results);
+        // this.results.push(...results);
       }
     });
 
     runner.on('end', () => {
-      if (this.results.length == 0) {
-        console.log('\n', chalk.magenta.underline.bold('(TestRail Reporter)'));
-        console.warn(
-          '\n',
-          'No testcases were matched. Ensure that your tests are declared correctly and matches Cxxx',
-          '\n'
-        );
-        this.testRail.deleteRun();
 
-        return;
-      }
+      // NO NEED as we are progressively update the results
 
-      // publish test cases results & close the run
-      this.testRail.publishResults(this.results)
-        .then(() => this.testRail.closeRun());
+      // if (this.results.length == 0) {
+      //   console.log('\n', chalk.magenta.underline.bold('(TestRail Reporter)'));
+      //   console.warn(
+      //     '\n',
+      //     'No testcases were matched. Ensure that your tests are declared correctly and matches Cxxx',
+      //     '\n'
+      //   );
+      //   this.testRail.deleteRun();
+
+      //   return;
+      // }
+
+      // // publish test cases results & close the run
+      // this.testRail.publishResults(this.results)
+      //   .then(() => this.testRail.closeRun());
     });
   }
 
