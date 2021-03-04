@@ -10,8 +10,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TestRail = void 0;
-const axios = require('axios');
-const chalk = require('chalk');
+const axios_1 = require("axios");
+const chalk_1 = require("chalk");
 class TestRail {
     constructor(options) {
         this.options = options;
@@ -27,7 +27,7 @@ class TestRail {
         if (this.options.filter) {
             url += `&filter=${this.options.filter}`;
         }
-        return axios({
+        return axios_1.default({
             method: 'get',
             url: url,
             headers: { 'Content-Type': 'application/json' },
@@ -45,7 +45,13 @@ class TestRail {
                 this.includeAll = false;
                 this.caseIds = yield this.getCases();
             }
-            axios({
+            console.log(chalk_1.default.magenta(`  _______        _   _____         _ `));
+            console.log(chalk_1.default.magenta(` |__   __|      | | |  __ \\     (_) |`));
+            console.log(chalk_1.default.magenta(`    | | ___  ___| |_| |__) |__ _ _| |`));
+            console.log(chalk_1.default.magenta("    | |/ _ \\/ __| __|  _  /  _  | | |"));
+            console.log(chalk_1.default.magenta(`    | |  __/\\__ \\ |_| | \\ \\ (_| | | |`));
+            console.log(chalk_1.default.magenta(`    |_|\\___||___/\\__|_|  \\_\\__,_|_|_|`));
+            axios_1.default({
                 method: 'post',
                 url: `${this.base}/add_run/${this.options.projectId}`,
                 headers: { 'Content-Type': 'application/json' },
@@ -62,20 +68,14 @@ class TestRail {
                 }),
             })
                 .then(response => {
-                console.log(chalk.magenta(`  _______        _   _____         _ `));
-                console.log(chalk.magenta(` |__   __|      | | |  __ \\     (_) |`));
-                console.log(chalk.magenta(`    | | ___  ___| |_| |__) |__ _ _| |`));
-                console.log(chalk.magenta("    | |/ _ \\/ __| __|  _  /  _  | | |"));
-                console.log(chalk.magenta(`    | |  __/\\__ \\ |_| | \\ \\ (_| | | |`));
-                console.log(chalk.magenta(`    |_|\\___||___/\\__|_|  \\_\\__,_|_|_|`));
-                console.log(chalk.magenta.bold(`Testrail reporter: Run with id ${response.data.id} successfully created`));
+                console.log(chalk_1.default.magenta.bold(`Testrail reporter: Run with id ${response.data.id} successfully created`));
                 this.runId = response.data.id;
             })
                 .catch(error => console.error(error));
         });
     }
     deleteRun() {
-        axios({
+        axios_1.default({
             method: 'post',
             url: `${this.base}/delete_run/${this.runId}`,
             headers: { 'Content-Type': 'application/json' },
@@ -84,11 +84,11 @@ class TestRail {
                 password: this.options.password,
             },
         }).then(() => {
-            console.log(chalk.magenta.bold(`Testrail reporter: Run successfully deleted`));
+            console.log(chalk_1.default.magenta.bold(`Testrail reporter: Run successfully deleted`));
         }).catch(error => console.error(error));
     }
     publishResults(results) {
-        return axios({
+        return axios_1.default({
             method: 'post',
             url: `${this.base}/add_results_for_cases/${this.runId}`,
             headers: { 'Content-Type': 'application/json' },
@@ -99,16 +99,16 @@ class TestRail {
             data: JSON.stringify({ results }),
         })
             .then(response => {
-            console.log('\n', chalk.magenta.bold(`Testrail reporter: Outcome of following test cases saved in TestRail run with id:${this.runId}`));
+            console.log('\n', chalk_1.default.magenta.bold(`Testrail reporter: Outcome of following test cases saved in TestRail run with id:${this.runId}`));
             results.forEach(result => {
-                console.log(chalk.magenta(`Test case ${result.case_id} with status id: ${result.status_id}`));
+                console.log(chalk_1.default.magenta(`Test case ${result.case_id} with status id: ${result.status_id}`));
             });
             console.log('\n');
-        })
-            .catch(error => console.error(error));
+            return response;
+        });
     }
     closeRun() {
-        axios({
+        axios_1.default({
             method: 'post',
             url: `${this.base}/close_run/${this.runId}`,
             headers: { 'Content-Type': 'application/json' },
@@ -117,7 +117,7 @@ class TestRail {
                 password: this.options.password,
             },
         })
-            .then(() => console.log(chalk.magenta.bold(`Testrail reporter: Run with id ${this.runId} closed successfully`)))
+            .then(() => console.log(chalk_1.default.magenta.bold(`Testrail reporter: Run with id ${this.runId} closed successfully`)))
             .catch(error => console.error(error));
     }
 }

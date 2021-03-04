@@ -1,5 +1,5 @@
-const axios = require('axios');
-const chalk = require('chalk');
+import axios from 'axios';
+import chalk from 'chalk';
 import { TestRailOptions, TestRailResult } from './testrail.interface';
 
 export class TestRail {
@@ -38,6 +38,14 @@ export class TestRail {
       this.includeAll = false;
       this.caseIds =  await this.getCases();
     }  
+
+    console.log(chalk.magenta(`  _______        _   _____         _ `));
+    console.log(chalk.magenta(` |__   __|      | | |  __ \\     (_) |`));
+    console.log(chalk.magenta(`    | | ___  ___| |_| |__) |__ _ _| |`));
+    console.log(chalk.magenta("    | |/ _ \\/ __| __|  _  /  _  | | |"));
+    console.log(chalk.magenta(`    | |  __/\\__ \\ |_| | \\ \\ (_| | | |`));
+    console.log(chalk.magenta(`    |_|\\___||___/\\__|_|  \\_\\__,_|_|_|`));
+
     axios({
       method: 'post',
       url: `${this.base}/add_run/${this.options.projectId}`,
@@ -55,13 +63,6 @@ export class TestRail {
       }),
     })
       .then(response => {
-        console.log(chalk.magenta(`  _______        _   _____         _ `));
-        console.log(chalk.magenta(` |__   __|      | | |  __ \\     (_) |`));
-        console.log(chalk.magenta(`    | | ___  ___| |_| |__) |__ _ _| |`));
-        console.log(chalk.magenta("    | |/ _ \\/ __| __|  _  /  _  | | |"));
-        console.log(chalk.magenta(`    | |  __/\\__ \\ |_| | \\ \\ (_| | | |`));
-        console.log(chalk.magenta(`    |_|\\___||___/\\__|_|  \\_\\__,_|_|_|`));
-
         console.log(chalk.magenta.bold(`Testrail reporter: Run with id ${response.data.id} successfully created`))
         this.runId = response.data.id;
       })
@@ -82,7 +83,7 @@ export class TestRail {
     }).catch(error => console.error(error));
   }
 
-  public publishResults(results: TestRailResult[]) {
+  public publishResults(results: TestRailResult[]){
 
     return axios({
       method: 'post',
@@ -100,8 +101,8 @@ export class TestRail {
           console.log(chalk.magenta(`Test case ${result.case_id} with status id: ${result.status_id}`))
         });
         console.log('\n');
-      })
-      .catch(error => console.error(error));
+        return response;
+      });
   }
 
   public closeRun() {

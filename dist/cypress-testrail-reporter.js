@@ -1,4 +1,13 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CypressTestRailReporter = void 0;
 const mocha_1 = require("mocha");
@@ -9,7 +18,6 @@ const testrail_interface_1 = require("./testrail.interface");
 class CypressTestRailReporter extends mocha_1.reporters.Spec {
     constructor(runner, options) {
         super(runner);
-        this.resultsPushPromises = [];
         let reporterOptions = options.reporterOptions;
         if (process.env.CYPRESS_TESTRAIL_REPORTER_PASSWORD) {
             reporterOptions.password = process.env.CYPRESS_TESTRAIL_REPORTER_PASSWORD;
@@ -39,7 +47,6 @@ class CypressTestRailReporter extends mocha_1.reporters.Spec {
                     };
                 });
                 this.resultsPushPromises.push(this.testRail.publishResults(results));
-                ;
             }
         });
         runner.on('fail', test => {
@@ -50,13 +57,13 @@ class CypressTestRailReporter extends mocha_1.reporters.Spec {
                         case_id: caseId,
                         status_id: testrail_interface_1.Status.Failed,
                         comment: `${test.err.message}`,
+                        elapsed: `${test.duration / 1000}s`
                     };
                 });
                 this.resultsPushPromises.push(this.testRail.publishResults(results));
-                ;
             }
         });
-        runner.on('end', () => {
+        runner.on('end', () => __awaiter(this, void 0, void 0, function* () {
             // highly unoptimal :D but sync :D
             function wait(ms) {
                 var start = Date.now(), now = start;
@@ -66,6 +73,11 @@ class CypressTestRailReporter extends mocha_1.reporters.Spec {
             }
             console.log('\n', 'Synchro started');
             console.log('total cases to synchronise', this.resultsPushPromises.length);
+            this.resultsPushPromises.forEach((p, i) => __awaiter(this, void 0, void 0, function* () {
+                console.log(`Awaiting for ${i}`);
+                const a = yield p;
+                console.log(`Outcome for ${i}:`, a);
+            }));
             Promise.all(this.resultsPushPromises).then(() => {
                 console.log('all saved correctly');
             }, (errors) => {
@@ -96,7 +108,7 @@ class CypressTestRailReporter extends mocha_1.reporters.Spec {
             // // publish test cases results & close the run
             // this.testRail.publishResults(this.results)
             //   .then(() => this.testRail.closeRun());
-        });
+        }));
     }
     validate(options, name) {
         if (options == null) {

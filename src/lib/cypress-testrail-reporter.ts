@@ -2,10 +2,11 @@ import { reporters } from 'mocha';
 import * as moment from 'moment';
 import { TestRail } from './testrail';
 import { titleToCaseIds } from './shared';
-import { Status, TestRailResult } from './testrail.interface';
+import { Status } from './testrail.interface';
+import { AxiosResponse } from 'axios';
 
 export class CypressTestRailReporter extends reporters.Spec {
-  private resultsPushPromises: TestRailResult[] = [];
+  private resultsPushPromises: Promise<AxiosResponse<any>>[];
   private testRail: TestRail;
 
   constructor(runner: any, options: any) {
@@ -45,8 +46,6 @@ export class CypressTestRailReporter extends reporters.Spec {
           };
         });
         this.resultsPushPromises.push(this.testRail.publishResults(results));
-        ;
-        
       }
     });
 
@@ -58,15 +57,16 @@ export class CypressTestRailReporter extends reporters.Spec {
             case_id: caseId,
             status_id: Status.Failed,
             comment: `${test.err.message}`,
+            elapsed: `${test.duration/1000}s`
           };
         });
         this.resultsPushPromises.push(this.testRail.publishResults(results));
-        ;
+        
         
       }
     });
 
-    runner.on('end', () => {
+    runner.on('end', async () => {
     
       // highly unoptimal :D but sync :D
       function wait(ms) {
@@ -80,6 +80,12 @@ export class CypressTestRailReporter extends reporters.Spec {
       console.log('\n','Synchro started');
 
       console.log('total cases to synchronise', this.resultsPushPromises.length);
+
+      this.resultsPushPromises.forEach(async (p, i) => {
+        console.log(`Awaiting for ${i}`)
+        const a = await p;
+        console.log(`Outcome for ${i}:`, a);
+      })
 
       Promise.all(this.resultsPushPromises).then(() => {
         console.log('all saved correctly');
