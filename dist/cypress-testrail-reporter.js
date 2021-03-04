@@ -9,6 +9,7 @@ const testrail_interface_1 = require("./testrail.interface");
 class CypressTestRailReporter extends mocha_1.reporters.Spec {
     constructor(runner, options) {
         super(runner);
+        this.resultsPushPromises = [];
         let reporterOptions = options.reporterOptions;
         if (process.env.CYPRESS_TESTRAIL_REPORTER_PASSWORD) {
             reporterOptions.password = process.env.CYPRESS_TESTRAIL_REPORTER_PASSWORD;
@@ -36,8 +37,8 @@ class CypressTestRailReporter extends mocha_1.reporters.Spec {
                         elapsed: `${test.duration / 1000}s`
                     };
                 });
-                return this.testRail.publishResults(results);
-                // this.results.push(...results);
+                this.resultsPushPromises.push(this.testRail.publishResults(results));
+                ;
             }
         });
         runner.on('fail', test => {
@@ -50,12 +51,12 @@ class CypressTestRailReporter extends mocha_1.reporters.Spec {
                         comment: `${test.err.message}`,
                     };
                 });
-                return this.testRail.publishResults(results);
-                // this.results.push(...results);
+                this.resultsPushPromises.push(this.testRail.publishResults(results));
+                ;
             }
         });
         runner.on('end', () => {
-            // highly unoptimal :D
+            // highly unoptimal :D but sync :D
             function wait(ms) {
                 var start = Date.now(), now = start;
                 while (now - start < ms) {
@@ -63,6 +64,11 @@ class CypressTestRailReporter extends mocha_1.reporters.Spec {
                 }
             }
             console.log('\n', 'Synchro started');
+            Promise.all(this.resultsPushPromises).then(() => {
+                console.log('all saved correctly');
+            }, (errors) => {
+                console.log('errors form test rail sync:', JSON.stringify(errors));
+            });
             wait(1000);
             console.log('\n', '.');
             wait(1000);
@@ -70,6 +76,7 @@ class CypressTestRailReporter extends mocha_1.reporters.Spec {
             wait(1000);
             console.log('\n', '.');
             wait(1000);
+            this.testRail.closeRun();
             console.log('\n', '.');
             wait(1000);
             console.log('\n', 'Synchro Finished');

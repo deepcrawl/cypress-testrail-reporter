@@ -2,10 +2,10 @@ import { reporters } from 'mocha';
 import * as moment from 'moment';
 import { TestRail } from './testrail';
 import { titleToCaseIds } from './shared';
-import { Status } from './testrail.interface';
+import { Status, TestRailResult } from './testrail.interface';
 
 export class CypressTestRailReporter extends reporters.Spec {
-  // private results: TestRailResult[] = [];
+  private resultsPushPromises: TestRailResult[] = [];
   private testRail: TestRail;
 
   constructor(runner: any, options: any) {
@@ -42,8 +42,9 @@ export class CypressTestRailReporter extends reporters.Spec {
             elapsed: `${test.duration/1000}s`
           };
         });
-        return this.testRail.publishResults(results);
-        // this.results.push(...results);
+        this.resultsPushPromises.push(this.testRail.publishResults(results));
+        ;
+        
       }
     });
 
@@ -57,23 +58,31 @@ export class CypressTestRailReporter extends reporters.Spec {
             comment: `${test.err.message}`,
           };
         });
-        return this.testRail.publishResults(results);
-        // this.results.push(...results);
+        this.resultsPushPromises.push(this.testRail.publishResults(results));
+        ;
+        
       }
     });
 
     runner.on('end', () => {
     
-      // highly unoptimal :D
+      // highly unoptimal :D but sync :D
       function wait(ms) {
         var start = Date.now(),
             now = start;
         while (now - start < ms) {
           now = Date.now();
         }
-    }
+      }
 
       console.log('\n','Synchro started');
+
+      Promise.all(this.resultsPushPromises).then(() => {
+        console.log('all saved correctly');
+      }, (errors) => {
+        console.log('errors form test rail sync:', JSON.stringify(errors));
+      })
+
       wait(1000);
       console.log('\n','.');
       wait(1000);
@@ -81,6 +90,9 @@ export class CypressTestRailReporter extends reporters.Spec {
       wait(1000);
       console.log('\n','.');
       wait(1000);
+
+      this.testRail.closeRun();
+     
       console.log('\n','.');
       wait(1000);
       console.log('\n','Synchro Finished');
