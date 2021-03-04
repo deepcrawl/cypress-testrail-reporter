@@ -23,10 +23,6 @@ export class CypressTestRailReporter extends reporters.Spec {
     this.validate(reporterOptions, 'projectId');
     this.validate(reporterOptions, 'suiteId');
 
-   
-
-    
-  
     runner.on('start', async () => {
       const executionDateTime = moment().format('MMM Do YYYY, HH:mm (Z)');
       const name = `${reporterOptions.runName || 'Automated test run'} ${executionDateTime}`;
