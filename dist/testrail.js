@@ -90,7 +90,7 @@ class TestRail {
         });
     }
     publishResults(results) {
-        return axios_1.default({
+        const a = axios_1.default({
             method: 'post',
             url: `${this.base}/add_results_for_cases/${this.runId}`,
             headers: { 'Content-Type': 'application/json' },
@@ -108,6 +108,14 @@ class TestRail {
             console.log('\n');
             return response;
         });
+        function wait(ms) {
+            var start = Date.now(), now = start;
+            while (now - start < ms) {
+                now = Date.now();
+            }
+        }
+        wait(2000);
+        return a;
     }
     closeRun() {
         return axios_1.default({

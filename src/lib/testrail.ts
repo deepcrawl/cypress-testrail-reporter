@@ -85,7 +85,7 @@ export class TestRail {
 
   public publishResults(results: TestRailResult[]){
 
-    return axios({
+    const a = axios({
       method: 'post',
       url: `${this.base}/add_results_for_cases/${this.runId}`,
       headers: { 'Content-Type': 'application/json' },
@@ -103,6 +103,17 @@ export class TestRail {
         console.log('\n');
         return response;
       });
+
+      function wait(ms) {
+        var start = Date.now(),
+            now = start;
+        while (now - start < ms) {
+          now = Date.now();
+        }
+      }
+
+    wait(2000);
+    return a;
   }
 
   public closeRun() {

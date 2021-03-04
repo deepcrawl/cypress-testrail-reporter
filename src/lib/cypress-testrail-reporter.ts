@@ -84,7 +84,7 @@ export class CypressTestRailReporter extends reporters.Spec {
       this.resultsPushPromises.forEach(async (p, i) => {
         console.log(`Awaiting for ${i}`)
         const a = await p;
-        console.log(`Outcome status for ${i}:`, a.status);
+        console.log(`Outcome s for ${i}:`, a.status);
       })
 
       Promise.all(this.resultsPushPromises).then(() => {
