@@ -31,13 +31,13 @@ export class CypressTestRailReporter extends reporters.Spec {
       });
     }
 
-    async function manageRunId(){
-      fs.readFile("temp.txt", "utf-8", (err, data) => {
+    function manageRunId(){
+      fs.readFile("temp.txt", "utf-8", function (err, data) {
         if (data) {
           this.testRail.writeRunId(Number(data));
         }
 
-        if (err){
+        if (err) {
           const executionDateTime = moment().format('MMM Do YYYY, HH:mm (Z)');
           const name = `${reporterOptions.runName || 'Automated test run'} ${executionDateTime}`;
           const description = 'For the Cypress run visit https://dashboard.cypress.io/#/projects/runs';

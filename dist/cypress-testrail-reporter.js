@@ -37,18 +37,16 @@ class CypressTestRailReporter extends mocha_1.reporters.Spec {
             });
         }
         function manageRunId() {
-            return __awaiter(this, void 0, void 0, function* () {
-                fs.readFile("temp.txt", "utf-8", (err, data) => {
-                    if (data) {
-                        this.testRail.writeRunId(Number(data));
-                    }
-                    if (err) {
-                        const executionDateTime = moment().format('MMM Do YYYY, HH:mm (Z)');
-                        const name = `${reporterOptions.runName || 'Automated test run'} ${executionDateTime}`;
-                        const description = 'For the Cypress run visit https://dashboard.cypress.io/#/projects/runs';
-                        this.testRail.createRun(name, description);
-                    }
-                });
+            fs.readFile("temp.txt", "utf-8", function (err, data) {
+                if (data) {
+                    this.testRail.writeRunId(Number(data));
+                }
+                if (err) {
+                    const executionDateTime = moment().format('MMM Do YYYY, HH:mm (Z)');
+                    const name = `${reporterOptions.runName || 'Automated test run'} ${executionDateTime}`;
+                    const description = 'For the Cypress run visit https://dashboard.cypress.io/#/projects/runs';
+                    this.testRail.createRun(name, description);
+                }
             });
         }
         runner.on('start', () => __awaiter(this, void 0, void 0, function* () {
