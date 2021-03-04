@@ -42,6 +42,10 @@ export class TestRail {
     console.log(chalk.magenta(`    |_|\\___||___/\\__|_|  \\_\\__,_|_|_|`));
   }
 
+  public writeRunId(id:number){
+    this.runId = id;
+  }
+
   public async createRun (name: string, description: string) {
     if (this.options.includeAllInTestRun === false){
       this.includeAll = false;

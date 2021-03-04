@@ -47,6 +47,9 @@ class TestRail {
         console.log(chalk_1.default.magenta(`    | |  __/\\__ \\ |_| | \\ \\ (_| | | |`));
         console.log(chalk_1.default.magenta(`    |_|\\___||___/\\__|_|  \\_\\__,_|_|_|`));
     }
+    writeRunId(id) {
+        this.runId = id;
+    }
     createRun(name, description) {
         return __awaiter(this, void 0, void 0, function* () {
             if (this.options.includeAllInTestRun === false) {
