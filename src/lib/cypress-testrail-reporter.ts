@@ -3,7 +3,6 @@ import * as moment from 'moment';
 import { TestRail } from './testrail';
 import { titleToCaseIds } from './shared';
 import { Status } from './testrail.interface';
-import { sleep } from 'deasync';
 
 export class CypressTestRailReporter extends reporters.Spec {
   // private results: TestRailResult[] = [];
@@ -64,17 +63,26 @@ export class CypressTestRailReporter extends reporters.Spec {
     });
 
     runner.on('end', () => {
+    
+      // highly unoptimal :D
+      function wait(ms) {
+        var start = Date.now(),
+            now = start;
+        while (now - start < ms) {
+          now = Date.now();
+        }
+    }
 
       console.log('\n','Synchro started');
-      sleep(1000);
+      wait(1000);
       console.log('\n','.');
-      sleep(1000);
+      wait(1000);
       console.log('\n','.');
-      sleep(1000);
+      wait(1000);
       console.log('\n','.');
-      sleep(1000);
+      wait(1000);
       console.log('\n','.');
-      sleep(1000);
+      wait(1000);
       console.log('\n','Synchro Finished');
 
       // NO NEED as we are progressively update the results
