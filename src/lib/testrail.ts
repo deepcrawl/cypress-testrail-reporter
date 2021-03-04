@@ -63,8 +63,10 @@ export class TestRail {
       }),
     })
       .then(response => {
-        console.log(chalk.magenta.bold(`Testrail reporter: Run with id ${response.data.id} successfully created`))
         this.runId = response.data.id;
+        const listOfIdsMessage = 'Testrail reporter: Test case ids detected in test suite: ' + this.caseIds.join(', ');
+        console.log(chalk.magenta.bold(`Testrail reporter: Run with id ${this.runId} successfully created`));
+        console.log(chalk.magenta(listOfIdsMessage));
       })
       .catch(error => console.error(error));
   }
@@ -85,7 +87,7 @@ export class TestRail {
 
   public publishResults(results: TestRailResult[]){
 
-    const a = axios({
+    return axios({
       method: 'post',
       url: `${this.base}/add_results_for_cases/${this.runId}`,
       headers: { 'Content-Type': 'application/json' },
@@ -103,17 +105,6 @@ export class TestRail {
         console.log('\n');
         return response;
       });
-
-      function wait(ms) {
-        var start = Date.now(),
-            now = start;
-        while (now - start < ms) {
-          now = Date.now();
-        }
-      }
-
-    wait(2000);
-    return a;
   }
 
   public closeRun() {

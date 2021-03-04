@@ -18,7 +18,6 @@ const testrail_interface_1 = require("./testrail.interface");
 class CypressTestRailReporter extends mocha_1.reporters.Spec {
     constructor(runner, options) {
         super(runner);
-        this.resultsPushPromises = [];
         let reporterOptions = options.reporterOptions;
         if (process.env.CYPRESS_TESTRAIL_REPORTER_PASSWORD) {
             reporterOptions.password = process.env.CYPRESS_TESTRAIL_REPORTER_PASSWORD;
@@ -29,13 +28,13 @@ class CypressTestRailReporter extends mocha_1.reporters.Spec {
         this.validate(reporterOptions, 'password');
         this.validate(reporterOptions, 'projectId');
         this.validate(reporterOptions, 'suiteId');
-        runner.on('start', () => {
+        runner.on('start', () => __awaiter(this, void 0, void 0, function* () {
             const executionDateTime = moment().format('MMM Do YYYY, HH:mm (Z)');
             const name = `${reporterOptions.runName || 'Automated test run'} ${executionDateTime}`;
             const description = 'For the Cypress run visit https://dashboard.cypress.io/#/projects/runs';
-            this.testRail.createRun(name, description);
-        });
-        runner.on('pass', test => {
+            return this.testRail.createRun(name, description);
+        }));
+        runner.on('pass', (test) => __awaiter(this, void 0, void 0, function* () {
             const caseIds = shared_1.titleToCaseIds(test.title);
             console.log('Publishing:', test.title, ' / ', caseIds);
             if (caseIds.length > 0) {
@@ -47,10 +46,10 @@ class CypressTestRailReporter extends mocha_1.reporters.Spec {
                         elapsed: `${test.duration / 1000}s`
                     };
                 });
-                this.resultsPushPromises.push(this.testRail.publishResults(results));
+                return this.testRail.publishResults(results);
             }
-        });
-        runner.on('fail', test => {
+        }));
+        runner.on('fail', (test) => __awaiter(this, void 0, void 0, function* () {
             const caseIds = shared_1.titleToCaseIds(test.title);
             if (caseIds.length > 0) {
                 const results = caseIds.map(caseId => {
@@ -61,57 +60,11 @@ class CypressTestRailReporter extends mocha_1.reporters.Spec {
                         elapsed: `${test.duration / 1000}s`
                     };
                 });
-                this.resultsPushPromises.push(this.testRail.publishResults(results));
+                return this.testRail.publishResults(results);
             }
-        });
+        }));
         runner.on('end', () => __awaiter(this, void 0, void 0, function* () {
-            // highly unoptimal :D but sync :D
-            function wait(ms) {
-                var start = Date.now(), now = start;
-                while (now - start < ms) {
-                    now = Date.now();
-                }
-            }
-            console.log('\n', 'Synchro started');
-            console.log('total cases to synchronise', this.resultsPushPromises.length);
-            this.resultsPushPromises.forEach((p, i) => __awaiter(this, void 0, void 0, function* () {
-                console.log(`Awaiting for ${i}`);
-                const a = yield p;
-                console.log(`Outcome s for ${i}:`, a.status);
-            }));
-            Promise.all(this.resultsPushPromises).then(() => {
-                console.log('all saved correctly');
-                process.exit(0);
-            }, (errors) => {
-                console.log('errors form test rail sync:', JSON.stringify(errors));
-                process.exit(errors.length);
-            }).finally(() => {
-            });
-            wait(1000);
-            console.log('\n', '.');
-            wait(1000);
-            console.log('\n', '.');
-            wait(1000);
-            console.log('\n', '.');
-            wait(1000);
-            this.testRail.closeRun();
-            console.log('\n', '.');
-            wait(1000);
-            console.log('\n', 'Synchro Finished');
-            // NO NEED as we are progressively update the results
-            // if (this.results.length == 0) {
-            //   console.log('\n', chalk.magenta.underline.bold('(TestRail Reporter)'));
-            //   console.warn(
-            //     '\n',
-            //     'No testcases were matched. Ensure that your tests are declared correctly and matches Cxxx',
-            //     '\n'
-            //   );
-            //   this.testRail.deleteRun();
-            //   return;
-            // }
-            // // publish test cases results & close the run
-            // this.testRail.publishResults(this.results)
-            //   .then(() => this.testRail.closeRun());
+            yield this.testRail.closeRun();
         }));
     }
     validate(options, name) {

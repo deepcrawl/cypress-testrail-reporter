@@ -3,10 +3,8 @@ import * as moment from 'moment';
 import { TestRail } from './testrail';
 import { titleToCaseIds } from './shared';
 import { Status } from './testrail.interface';
-import { AxiosResponse } from 'axios';
 
 export class CypressTestRailReporter extends reporters.Spec {
-  private resultsPushPromises: Promise<AxiosResponse<any>>[] = [];
   private testRail: TestRail;
 
   constructor(runner: any, options: any) {
@@ -25,14 +23,14 @@ export class CypressTestRailReporter extends reporters.Spec {
     this.validate(reporterOptions, 'projectId');
     this.validate(reporterOptions, 'suiteId');
 
-    runner.on('start', () => {
+    runner.on('start', async () => {
       const executionDateTime = moment().format('MMM Do YYYY, HH:mm (Z)');
       const name = `${reporterOptions.runName || 'Automated test run'} ${executionDateTime}`;
       const description = 'For the Cypress run visit https://dashboard.cypress.io/#/projects/runs';
-      this.testRail.createRun(name, description);
+      return this.testRail.createRun(name, description);
     });
 
-    runner.on('pass', test => {
+    runner.on('pass', async (test) => {
       const caseIds = titleToCaseIds(test.title);
       console.log('Publishing:', test.title, ' / ', caseIds);
       
@@ -45,11 +43,12 @@ export class CypressTestRailReporter extends reporters.Spec {
             elapsed: `${test.duration/1000}s`
           };
         });
-        this.resultsPushPromises.push(this.testRail.publishResults(results));
+        return this.testRail.publishResults(results);
       }
+     
     });
 
-    runner.on('fail', test => {
+    runner.on('fail', async (test) => {
       const caseIds = titleToCaseIds(test.title);
       if (caseIds.length > 0) {
         const results = caseIds.map(caseId => {
@@ -60,75 +59,12 @@ export class CypressTestRailReporter extends reporters.Spec {
             elapsed: `${test.duration/1000}s`
           };
         });
-        this.resultsPushPromises.push(this.testRail.publishResults(results));
-        
-        
+        return this.testRail.publishResults(results);
       }
     });
 
     runner.on('end', async () => {
-    
-      // highly unoptimal :D but sync :D
-      function wait(ms) {
-        var start = Date.now(),
-            now = start;
-        while (now - start < ms) {
-          now = Date.now();
-        }
-      }
-
-      console.log('\n','Synchro started');
-
-      console.log('total cases to synchronise', this.resultsPushPromises.length);
-
-      this.resultsPushPromises.forEach(async (p, i) => {
-        console.log(`Awaiting for ${i}`)
-        const a = await p;
-        console.log(`Outcome s for ${i}:`, a.status);
-      })
-
-      Promise.all(this.resultsPushPromises).then(() => {
-        console.log('all saved correctly');
-        process.exit(0);
-      }, (errors) => {
-        console.log('errors form test rail sync:', JSON.stringify(errors));
-        process.exit(errors.length);
-       
-      }).finally(() => {
-       
-      })
-
-      wait(1000);
-      console.log('\n','.');
-      wait(1000);
-      console.log('\n','.');
-      wait(1000);
-      console.log('\n','.');
-      wait(1000);
-
-      this.testRail.closeRun();
-     
-      console.log('\n','.');
-      wait(1000);
-      console.log('\n','Synchro Finished');
-
-      // NO NEED as we are progressively update the results
-
-      // if (this.results.length == 0) {
-      //   console.log('\n', chalk.magenta.underline.bold('(TestRail Reporter)'));
-      //   console.warn(
-      //     '\n',
-      //     'No testcases were matched. Ensure that your tests are declared correctly and matches Cxxx',
-      //     '\n'
-      //   );
-      //   this.testRail.deleteRun();
-
-      //   return;
-      // }
-
-      // // publish test cases results & close the run
-      // this.testRail.publishResults(this.results)
-      //   .then(() => this.testRail.closeRun());
+      await this.testRail.closeRun();
     });
   }
 
