@@ -33,18 +33,22 @@ export class TestRail {
       .catch(error => console.error(error));
   }
 
-  public async createRun (name: string, description: string) {
-    if (this.options.includeAllInTestRun === false){
-      this.includeAll = false;
-      this.caseIds =  await this.getCases();
-    }  
-
+  private printCoolAscii() {
     console.log(chalk.magenta(`  _______        _   _____         _ `));
     console.log(chalk.magenta(` |__   __|      | | |  __ \\     (_) |`));
     console.log(chalk.magenta(`    | | ___  ___| |_| |__) |__ _ _| |`));
     console.log(chalk.magenta("    | |/ _ \\/ __| __|  _  /  _  | | |"));
     console.log(chalk.magenta(`    | |  __/\\__ \\ |_| | \\ \\ (_| | | |`));
     console.log(chalk.magenta(`    |_|\\___||___/\\__|_|  \\_\\__,_|_|_|`));
+  }
+
+  public async createRun (name: string, description: string) {
+    if (this.options.includeAllInTestRun === false){
+      this.includeAll = false;
+      this.caseIds =  await this.getCases();
+    }  
+
+    this.printCoolAscii();
 
     axios({
       method: 'post',

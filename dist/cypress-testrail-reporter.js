@@ -36,12 +36,25 @@ class CypressTestRailReporter extends mocha_1.reporters.Spec {
         }));
         runner.on('pass', (test) => __awaiter(this, void 0, void 0, function* () {
             const caseIds = shared_1.titleToCaseIds(test.title);
-            console.log('Publishing:', test.title, ' / ', caseIds);
             if (caseIds.length > 0) {
                 const results = caseIds.map(caseId => {
                     return {
                         case_id: caseId,
                         status_id: testrail_interface_1.Status.Passed,
+                        comment: `Execution time: ${test.duration}ms`,
+                        elapsed: `${test.duration / 1000}s`
+                    };
+                });
+                return this.testRail.publishResults(results);
+            }
+        }));
+        runner.on('pending', (test) => __awaiter(this, void 0, void 0, function* () {
+            const caseIds = shared_1.titleToCaseIds(test.title);
+            if (caseIds.length > 0) {
+                const results = caseIds.map(caseId => {
+                    return {
+                        case_id: caseId,
+                        status_id: testrail_interface_1.Status.Untested,
                         comment: `Execution time: ${test.duration}ms`,
                         elapsed: `${test.duration / 1000}s`
                     };

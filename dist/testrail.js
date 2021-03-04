@@ -39,18 +39,21 @@ class TestRail {
             .then(response => response.data.map(item => item.id))
             .catch(error => console.error(error));
     }
+    printCoolAscii() {
+        console.log(chalk_1.default.magenta(`  _______        _   _____         _ `));
+        console.log(chalk_1.default.magenta(` |__   __|      | | |  __ \\     (_) |`));
+        console.log(chalk_1.default.magenta(`    | | ___  ___| |_| |__) |__ _ _| |`));
+        console.log(chalk_1.default.magenta("    | |/ _ \\/ __| __|  _  /  _  | | |"));
+        console.log(chalk_1.default.magenta(`    | |  __/\\__ \\ |_| | \\ \\ (_| | | |`));
+        console.log(chalk_1.default.magenta(`    |_|\\___||___/\\__|_|  \\_\\__,_|_|_|`));
+    }
     createRun(name, description) {
         return __awaiter(this, void 0, void 0, function* () {
             if (this.options.includeAllInTestRun === false) {
                 this.includeAll = false;
                 this.caseIds = yield this.getCases();
             }
-            console.log(chalk_1.default.magenta(`  _______        _   _____         _ `));
-            console.log(chalk_1.default.magenta(` |__   __|      | | |  __ \\     (_) |`));
-            console.log(chalk_1.default.magenta(`    | | ___  ___| |_| |__) |__ _ _| |`));
-            console.log(chalk_1.default.magenta("    | |/ _ \\/ __| __|  _  /  _  | | |"));
-            console.log(chalk_1.default.magenta(`    | |  __/\\__ \\ |_| | \\ \\ (_| | | |`));
-            console.log(chalk_1.default.magenta(`    |_|\\___||___/\\__|_|  \\_\\__,_|_|_|`));
+            this.printCoolAscii();
             axios_1.default({
                 method: 'post',
                 url: `${this.base}/add_run/${this.options.projectId}`,

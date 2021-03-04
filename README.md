@@ -2,6 +2,11 @@
 
 Publishes [Cypress](https://www.cypress.io/) runs on TestRail.
 
+## TODO
+* Before posting the test result check if it is in the list of the test cases.
+* Solve the problem of the last test not beeing send as mocha evaluates process.exit without waiting for async calls to finish :(
+* It would be good to be able to create a test case automatically without need to make them first in the testrail manually -> This just means more maintanance. ( Not that hard actally ) all you need to do is get the tests from the test suite and verify that the name of the test is there. If not call the endpoint to make a new test and then after it returns call the update results for it :)
+
 ## Install
 
 ```shell

@@ -32,8 +32,6 @@ export class CypressTestRailReporter extends reporters.Spec {
 
     runner.on('pass', async (test) => {
       const caseIds = titleToCaseIds(test.title);
-      console.log('Publishing:', test.title, ' / ', caseIds);
-      
       if (caseIds.length > 0) {
         const results = caseIds.map(caseId => {
           return {
@@ -46,6 +44,21 @@ export class CypressTestRailReporter extends reporters.Spec {
         return this.testRail.publishResults(results);
       }
      
+    });
+
+    runner.on('pending', async (test) => {
+      const caseIds = titleToCaseIds(test.title);
+      if (caseIds.length > 0) {
+        const results = caseIds.map(caseId => {
+          return {
+            case_id: caseId,
+            status_id: Status.Untested,
+            comment: `Execution time: ${test.duration}ms`,
+            elapsed: `${test.duration/1000}s`
+          };
+        });
+        return this.testRail.publishResults(results);
+      }
     });
 
     runner.on('fail', async (test) => {
