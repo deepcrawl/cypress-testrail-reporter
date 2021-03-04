@@ -3,7 +3,6 @@ import * as moment from 'moment';
 import { TestRail } from './testrail';
 import { titleToCaseIds } from './shared';
 import { Status } from './testrail.interface';
-var fs = require("fs");
 
 export class CypressTestRailReporter extends reporters.Spec {
   private testRail: TestRail;
@@ -24,34 +23,15 @@ export class CypressTestRailReporter extends reporters.Spec {
     this.validate(reporterOptions, 'projectId');
     this.validate(reporterOptions, 'suiteId');
 
-    function writeRunId(data){
-      fs.writeFile("runId.txt", data, (err) => {
-        if (err) console.log(err);
-        console.log("Successfully Written to File.");
-      });
-    }
+   
 
-    function manageRunId(){
-      fs.readFile("temp.txt", "utf-8", function (err, data) {
-        if (data) {
-          this.testRail.writeRunId(Number(data));
-        }
-
-        if (err) {
-          const executionDateTime = moment().format('MMM Do YYYY, HH:mm (Z)');
-          const name = `${reporterOptions.runName || 'Automated test run'} ${executionDateTime}`;
-          const description = 'For the Cypress run visit https://dashboard.cypress.io/#/projects/runs';
-          this.testRail.createRun(name, description);
-        }
-      });
-    }
+    
   
     runner.on('start', async () => {
-      // const executionDateTime = moment().format('MMM Do YYYY, HH:mm (Z)');
-      // const name = `${reporterOptions.runName || 'Automated test run'} ${executionDateTime}`;
-      // const description = 'For the Cypress run visit https://dashboard.cypress.io/#/projects/runs';
-      // return this.testRail.createRun(name, description);
-      manageRunId();
+      const executionDateTime = moment().format('MMM Do YYYY, HH:mm (Z)');
+      const name = `${reporterOptions.runName || 'Automated test run'} ${executionDateTime}`;
+      const description = 'For the Cypress run visit https://dashboard.cypress.io/#/projects/runs';
+      return this.testRail.createRun(name, description);
     });
 
     runner.on('pass', async (test) => {

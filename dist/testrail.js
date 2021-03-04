@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.TestRail = void 0;
 const axios_1 = require("axios");
 const chalk_1 = require("chalk");
+var fs = require("fs");
 class TestRail {
     constructor(options) {
         this.options = options;
@@ -47,39 +48,54 @@ class TestRail {
         console.log(chalk_1.default.magenta(`    | |  __/\\__ \\ |_| | \\ \\ (_| | | |`));
         console.log(chalk_1.default.magenta(`    |_|\\___||___/\\__|_|  \\_\\__,_|_|_|`));
     }
-    writeRunId(id) {
-        this.runId = id;
+    makeRun(name, description) {
+        axios_1.default({
+            method: 'post',
+            url: `${this.base}/add_run/${this.options.projectId}`,
+            headers: { 'Content-Type': 'application/json' },
+            auth: {
+                username: this.options.username,
+                password: this.options.password,
+            },
+            data: JSON.stringify({
+                suite_id: this.options.suiteId,
+                name,
+                description,
+                include_all: this.includeAll,
+                case_ids: this.caseIds
+            }),
+        })
+            .then(response => {
+            this.runId = response.data.id;
+            const listOfIdsMessage = 'Testrail reporter: Test case ids detected in test suite: ' + this.caseIds.join(', ');
+            console.log(chalk_1.default.magenta.bold(`Testrail reporter: Run with id ${this.runId} successfully created`));
+            console.log(chalk_1.default.magenta(listOfIdsMessage));
+        })
+            .catch(error => console.error(error));
     }
     createRun(name, description) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (this.options.includeAllInTestRun === false) {
-                this.includeAll = false;
-                this.caseIds = yield this.getCases();
-            }
-            this.printCoolAscii();
-            axios_1.default({
-                method: 'post',
-                url: `${this.base}/add_run/${this.options.projectId}`,
-                headers: { 'Content-Type': 'application/json' },
-                auth: {
-                    username: this.options.username,
-                    password: this.options.password,
-                },
-                data: JSON.stringify({
-                    suite_id: this.options.suiteId,
-                    name,
-                    description,
-                    include_all: this.includeAll,
-                    case_ids: this.caseIds
-                }),
-            })
-                .then(response => {
-                this.runId = response.data.id;
-                const listOfIdsMessage = 'Testrail reporter: Test case ids detected in test suite: ' + this.caseIds.join(', ');
-                console.log(chalk_1.default.magenta.bold(`Testrail reporter: Run with id ${this.runId} successfully created`));
-                console.log(chalk_1.default.magenta(listOfIdsMessage));
-            })
-                .catch(error => console.error(error));
+            fs.readFile("runId.txt", "utf-8", function (err, data) {
+                if (data) {
+                    this.runId = data;
+                }
+                if (err) {
+                    this.printCoolAscii();
+                    this.makeRun(name, description).then(() => {
+                        fs.writeFile("runId.txt", this.runId, (err) => {
+                            if (err)
+                                console.log(err);
+                            console.log("Successfully Written to File.");
+                        });
+                        if (this.options.includeAllInTestRun === false) {
+                            this.includeAll = false;
+                            this.getCases().then((cases) => {
+                                this.caseIds = cases;
+                            });
+                        }
+                    });
+                }
+            });
         });
     }
     deleteRun() {

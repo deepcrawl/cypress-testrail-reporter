@@ -15,7 +15,6 @@ const moment = require("moment");
 const testrail_1 = require("./testrail");
 const shared_1 = require("./shared");
 const testrail_interface_1 = require("./testrail.interface");
-var fs = require("fs");
 class CypressTestRailReporter extends mocha_1.reporters.Spec {
     constructor(runner, options) {
         super(runner);
@@ -29,32 +28,11 @@ class CypressTestRailReporter extends mocha_1.reporters.Spec {
         this.validate(reporterOptions, 'password');
         this.validate(reporterOptions, 'projectId');
         this.validate(reporterOptions, 'suiteId');
-        function writeRunId(data) {
-            fs.writeFile("runId.txt", data, (err) => {
-                if (err)
-                    console.log(err);
-                console.log("Successfully Written to File.");
-            });
-        }
-        function manageRunId() {
-            fs.readFile("temp.txt", "utf-8", function (err, data) {
-                if (data) {
-                    this.testRail.writeRunId(Number(data));
-                }
-                if (err) {
-                    const executionDateTime = moment().format('MMM Do YYYY, HH:mm (Z)');
-                    const name = `${reporterOptions.runName || 'Automated test run'} ${executionDateTime}`;
-                    const description = 'For the Cypress run visit https://dashboard.cypress.io/#/projects/runs';
-                    this.testRail.createRun(name, description);
-                }
-            });
-        }
         runner.on('start', () => __awaiter(this, void 0, void 0, function* () {
-            // const executionDateTime = moment().format('MMM Do YYYY, HH:mm (Z)');
-            // const name = `${reporterOptions.runName || 'Automated test run'} ${executionDateTime}`;
-            // const description = 'For the Cypress run visit https://dashboard.cypress.io/#/projects/runs';
-            // return this.testRail.createRun(name, description);
-            manageRunId();
+            const executionDateTime = moment().format('MMM Do YYYY, HH:mm (Z)');
+            const name = `${reporterOptions.runName || 'Automated test run'} ${executionDateTime}`;
+            const description = 'For the Cypress run visit https://dashboard.cypress.io/#/projects/runs';
+            return this.testRail.createRun(name, description);
         }));
         runner.on('pass', (test) => __awaiter(this, void 0, void 0, function* () {
             const caseIds = shared_1.titleToCaseIds(test.title);

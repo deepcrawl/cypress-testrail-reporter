@@ -1,6 +1,7 @@
 import axios from 'axios';
 import chalk from 'chalk';
 import { TestRailOptions, TestRailResult } from './testrail.interface';
+var fs = require("fs");
 
 export class TestRail {
   private base: String;
@@ -42,18 +43,8 @@ export class TestRail {
     console.log(chalk.magenta(`    |_|\\___||___/\\__|_|  \\_\\__,_|_|_|`));
   }
 
-  public writeRunId(id:number){
-    this.runId = id;
-  }
 
-  public async createRun (name: string, description: string) {
-    if (this.options.includeAllInTestRun === false){
-      this.includeAll = false;
-      this.caseIds =  await this.getCases();
-    }  
-
-    this.printCoolAscii();
-
+  private makeRun(name: string, description: string) { 
     axios({
       method: 'post',
       url: `${this.base}/add_run/${this.options.projectId}`,
@@ -70,13 +61,37 @@ export class TestRail {
         case_ids: this.caseIds
       }),
     })
-      .then(response => {
-        this.runId = response.data.id;
-        const listOfIdsMessage = 'Testrail reporter: Test case ids detected in test suite: ' + this.caseIds.join(', ');
-        console.log(chalk.magenta.bold(`Testrail reporter: Run with id ${this.runId} successfully created`));
-        console.log(chalk.magenta(listOfIdsMessage));
-      })
-      .catch(error => console.error(error));
+    .then(response => {
+      this.runId = response.data.id;
+      const listOfIdsMessage = 'Testrail reporter: Test case ids detected in test suite: ' + this.caseIds.join(', ');
+      console.log(chalk.magenta.bold(`Testrail reporter: Run with id ${this.runId} successfully created`));
+      console.log(chalk.magenta(listOfIdsMessage));
+    })
+    .catch(error => console.error(error));
+  }
+
+  public async createRun (name: string, description: string) {
+
+    fs.readFile("runId.txt", "utf-8", function (err, data) {
+      if (data) {
+        this.runId = data;
+      }
+      if (err) {
+        this.printCoolAscii();
+        this.makeRun(name, description).then( () => {
+          fs.writeFile("runId.txt", this.runId, (err) => {
+            if (err) console.log(err);
+            console.log("Successfully Written to File.");
+          });
+          if (this.options.includeAllInTestRun === false){
+            this.includeAll = false;
+            this.getCases().then((cases) => {
+              this.caseIds = cases;
+            })
+          }  
+        })
+      }
+    });
   }
 
   public async deleteRun() {
