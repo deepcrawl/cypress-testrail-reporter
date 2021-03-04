@@ -82,25 +82,26 @@ export class TestRail {
     }).catch(error => console.error(error));
   }
 
-  public publishResults(results: TestRailResult[]) {
-    return axios({
-      method: 'post',
-      url: `${this.base}/add_results_for_cases/${this.runId}`,
-      headers: { 'Content-Type': 'application/json' },
-      auth: {
-        username: this.options.username,
-        password: this.options.password,
-      },
-      data: JSON.stringify({ results }),
-    })
-      .then(response => {
-        console.log('\n', chalk.magenta.bold(`Testrail reporter: Outcome of following test cases saved in TestRail run with id:${this.runId}`));
-        results.forEach(result => { 
-          console.log(chalk.magenta(`Test case ${result.case_id} with status id: ${result.status_id}`))
-        });
-        console.log('\n');
+  public async publishResults(results: TestRailResult[]) {
+    try {
+      await axios({
+        method: 'post',
+        url: `${this.base}/add_results_for_cases/${this.runId}`,
+        headers: { 'Content-Type': 'application/json' },
+        auth: {
+          username: this.options.username,
+          password: this.options.password,
+        },
+        data: JSON.stringify({ results }),
       })
-      .catch(error => console.error(error));
+      console.log('\n', chalk.magenta.bold(`Testrail reporter: Outcome of following test cases saved in TestRail run with id:${this.runId}`));
+      results.forEach(result => { 
+        console.log(chalk.magenta(`Test case ${result.case_id} with status id: ${result.status_id}`))
+      });
+      console.log('\n');
+    } catch (e){
+      console.error(e)
+    }
   }
 
   public closeRun() {
