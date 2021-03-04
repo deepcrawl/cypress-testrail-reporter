@@ -77,14 +77,15 @@ class CypressTestRailReporter extends mocha_1.reporters.Spec {
             this.resultsPushPromises.forEach((p, i) => __awaiter(this, void 0, void 0, function* () {
                 console.log(`Awaiting for ${i}`);
                 const a = yield p;
-                console.log(`Outcome for ${i}:`, a);
+                console.log(`Outcome status for ${i}:`, a.status);
             }));
             Promise.all(this.resultsPushPromises).then(() => {
                 console.log('all saved correctly');
+                process.exit(0);
             }, (errors) => {
                 console.log('errors form test rail sync:', JSON.stringify(errors));
+                process.exit(errors.length);
             }).finally(() => {
-                process.exit();
             });
             wait(1000);
             console.log('\n', '.');

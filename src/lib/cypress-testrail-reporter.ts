@@ -84,15 +84,18 @@ export class CypressTestRailReporter extends reporters.Spec {
       this.resultsPushPromises.forEach(async (p, i) => {
         console.log(`Awaiting for ${i}`)
         const a = await p;
-        console.log(`Outcome for ${i}:`, a);
+        console.log(`Outcome status for ${i}:`, a.status);
       })
 
       Promise.all(this.resultsPushPromises).then(() => {
         console.log('all saved correctly');
+        process.exit(0);
       }, (errors) => {
         console.log('errors form test rail sync:', JSON.stringify(errors));
+        process.exit(errors.length);
+       
       }).finally(() => {
-        process.exit();
+       
       })
 
       wait(1000);
