@@ -28,6 +28,7 @@ class CypressTestRailReporter extends mocha_1.reporters.Spec {
         });
         runner.on('pass', test => {
             const caseIds = shared_1.titleToCaseIds(test.title);
+            console.log('Publishing:', test.title, ' / ', caseIds);
             if (caseIds.length > 0) {
                 const results = caseIds.map(caseId => {
                     return {
@@ -64,6 +65,7 @@ class CypressTestRailReporter extends mocha_1.reporters.Spec {
                 }
             }
             console.log('\n', 'Synchro started');
+            console.log('total cases to synchronise', this.resultsPushPromises.length);
             Promise.all(this.resultsPushPromises).then(() => {
                 console.log('all saved correctly');
             }, (errors) => {

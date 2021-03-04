@@ -83,6 +83,7 @@ export class TestRail {
   }
 
   public publishResults(results: TestRailResult[]) {
+
     return axios({
       method: 'post',
       url: `${this.base}/add_results_for_cases/${this.runId}`,
