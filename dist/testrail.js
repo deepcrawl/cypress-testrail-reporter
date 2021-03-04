@@ -75,17 +75,19 @@ class TestRail {
         });
     }
     deleteRun() {
-        axios_1.default({
-            method: 'post',
-            url: `${this.base}/delete_run/${this.runId}`,
-            headers: { 'Content-Type': 'application/json' },
-            auth: {
-                username: this.options.username,
-                password: this.options.password,
-            },
-        }).then(() => {
-            console.log(chalk_1.default.magenta.bold(`Testrail reporter: Run successfully deleted`));
-        }).catch(error => console.error(error));
+        return __awaiter(this, void 0, void 0, function* () {
+            return axios_1.default({
+                method: 'post',
+                url: `${this.base}/delete_run/${this.runId}`,
+                headers: { 'Content-Type': 'application/json' },
+                auth: {
+                    username: this.options.username,
+                    password: this.options.password,
+                },
+            }).then(() => {
+                console.log(chalk_1.default.magenta.bold(`Testrail reporter: Run successfully deleted`));
+            }).catch(error => console.error(error));
+        });
     }
     publishResults(results) {
         return axios_1.default({
@@ -108,7 +110,7 @@ class TestRail {
         });
     }
     closeRun() {
-        axios_1.default({
+        return axios_1.default({
             method: 'post',
             url: `${this.base}/close_run/${this.runId}`,
             headers: { 'Content-Type': 'application/json' },
@@ -117,7 +119,10 @@ class TestRail {
                 password: this.options.password,
             },
         })
-            .then(() => console.log(chalk_1.default.magenta.bold(`Testrail reporter: Run with id ${this.runId} closed successfully`)))
+            .then((response) => {
+            console.log(chalk_1.default.magenta.bold(`Testrail reporter: Run with id ${this.runId} closed successfully`));
+            return response;
+        })
             .catch(error => console.error(error));
     }
 }

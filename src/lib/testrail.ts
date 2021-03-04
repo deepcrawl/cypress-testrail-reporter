@@ -69,8 +69,8 @@ export class TestRail {
       .catch(error => console.error(error));
   }
 
-  public deleteRun() {
-    axios({
+  public async deleteRun() {
+    return axios({
       method: 'post',
       url: `${this.base}/delete_run/${this.runId}`,
       headers: { 'Content-Type': 'application/json' },
@@ -106,7 +106,7 @@ export class TestRail {
   }
 
   public closeRun() {
-    axios({
+    return axios({
       method: 'post',
       url: `${this.base}/close_run/${this.runId}`,
       headers: { 'Content-Type': 'application/json' },
@@ -115,7 +115,10 @@ export class TestRail {
         password: this.options.password,
       },
     })
-      .then(() => console.log(chalk.magenta.bold(`Testrail reporter: Run with id ${this.runId} closed successfully`)))
+      .then((response) => { 
+        console.log(chalk.magenta.bold(`Testrail reporter: Run with id ${this.runId} closed successfully`))
+        return response;
+      })
       .catch(error => console.error(error));
   }
 }

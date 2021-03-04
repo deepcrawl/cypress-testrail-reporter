@@ -91,6 +91,8 @@ export class CypressTestRailReporter extends reporters.Spec {
         console.log('all saved correctly');
       }, (errors) => {
         console.log('errors form test rail sync:', JSON.stringify(errors));
+      }).finally(() => {
+        process.exit();
       })
 
       wait(1000);
