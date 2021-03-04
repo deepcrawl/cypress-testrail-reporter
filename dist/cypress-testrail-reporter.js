@@ -6,7 +6,7 @@ const moment = require("moment");
 const testrail_1 = require("./testrail");
 const shared_1 = require("./shared");
 const testrail_interface_1 = require("./testrail.interface");
-const chalk = require('chalk');
+const deasync_1 = require("deasync");
 class CypressTestRailReporter extends mocha_1.reporters.Spec {
     constructor(runner, options) {
         super(runner);
@@ -56,6 +56,17 @@ class CypressTestRailReporter extends mocha_1.reporters.Spec {
             }
         });
         runner.on('end', () => {
+            console.log('\n', 'Synchro started');
+            deasync_1.sleep(1000);
+            console.log('\n', '.');
+            deasync_1.sleep(1000);
+            console.log('\n', '.');
+            deasync_1.sleep(1000);
+            console.log('\n', '.');
+            deasync_1.sleep(1000);
+            console.log('\n', '.');
+            deasync_1.sleep(1000);
+            console.log('\n', 'Synchro Finished');
             // NO NEED as we are progressively update the results
             // if (this.results.length == 0) {
             //   console.log('\n', chalk.magenta.underline.bold('(TestRail Reporter)'));

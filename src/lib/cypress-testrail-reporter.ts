@@ -3,7 +3,7 @@ import * as moment from 'moment';
 import { TestRail } from './testrail';
 import { titleToCaseIds } from './shared';
 import { Status } from './testrail.interface';
-const chalk = require('chalk');
+import { sleep } from 'deasync';
 
 export class CypressTestRailReporter extends reporters.Spec {
   // private results: TestRailResult[] = [];
@@ -64,6 +64,18 @@ export class CypressTestRailReporter extends reporters.Spec {
     });
 
     runner.on('end', () => {
+
+      console.log('\n','Synchro started');
+      sleep(1000);
+      console.log('\n','.');
+      sleep(1000);
+      console.log('\n','.');
+      sleep(1000);
+      console.log('\n','.');
+      sleep(1000);
+      console.log('\n','.');
+      sleep(1000);
+      console.log('\n','Synchro Finished');
 
       // NO NEED as we are progressively update the results
 
