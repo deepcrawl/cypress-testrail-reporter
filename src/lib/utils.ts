@@ -10,14 +10,15 @@ export function printCoolAscii() {
 
 export function containesNoReportFlag(title: string) {
     const noReportRegex: RegExp = /#COMMAND:noReport#/g;
-    const a = noReportRegex.exec(title);
-    console.log('title:', title, 'Found norRep:', a)
-    return a;
+    return noReportRegex.exec(title);
 }
 
 export function containsCloseRunFlag(title: string) {
     const closeRunRegex: RegExp = /#COMMAND:closeRun#/g;
-    const a = closeRunRegex.exec(title);
-    console.log('title:', title, 'Found closeRun:', a)
-    return a;
-  }
+    return closeRunRegex.exec(title);
+}
+
+export function getTestTitle(title, parent) {
+    let newTitle = parent?.title ? parent.title + ' > ' : '';
+    return newTitle + title;
+}

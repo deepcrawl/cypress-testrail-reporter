@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.containsCloseRunFlag = exports.containesNoReportFlag = exports.printCoolAscii = void 0;
+exports.getTestTitle = exports.containsCloseRunFlag = exports.containesNoReportFlag = exports.printCoolAscii = void 0;
 const chalk_1 = require("chalk");
 function printCoolAscii() {
     console.log(chalk_1.default.magenta(`  _______        _   _____         _ `));
@@ -13,16 +13,17 @@ function printCoolAscii() {
 exports.printCoolAscii = printCoolAscii;
 function containesNoReportFlag(title) {
     const noReportRegex = /#COMMAND:noReport#/g;
-    const a = noReportRegex.exec(title);
-    console.log('title:', title, 'Found norRep:', a);
-    return a;
+    return noReportRegex.exec(title);
 }
 exports.containesNoReportFlag = containesNoReportFlag;
 function containsCloseRunFlag(title) {
     const closeRunRegex = /#COMMAND:closeRun#/g;
-    const a = closeRunRegex.exec(title);
-    console.log('title:', title, 'Found closeRun:', a);
-    return a;
+    return closeRunRegex.exec(title);
 }
 exports.containsCloseRunFlag = containsCloseRunFlag;
+function getTestTitle(title, parent) {
+    let newTitle = (parent === null || parent === void 0 ? void 0 : parent.title) ? parent.title + ' > ' : '';
+    return newTitle + title;
+}
+exports.getTestTitle = getTestTitle;
 //# sourceMappingURL=utils.js.map

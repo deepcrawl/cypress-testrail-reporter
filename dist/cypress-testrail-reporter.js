@@ -42,14 +42,14 @@ class CypressTestRailReporter extends mocha_1.reporters.Spec {
             });
         }));
         runner.on(EVENT_TEST_PASS, (test) => __awaiter(this, void 0, void 0, function* () {
-            return this.testRail.publishResult(test.title, {
+            return this.testRail.publishResult(utils_1.getTestTitle(test.title, test.parent), {
                 status_id: testrail_interface_1.Status.Passed,
                 comment: `Execution time: ${test.duration}ms`,
                 elapsed: `${test.duration / 1000}s`
             });
         }));
         runner.on(EVENT_TEST_PENDING, (test) => __awaiter(this, void 0, void 0, function* () {
-            return this.testRail.publishResult(test.title, {
+            return this.testRail.publishResult(utils_1.getTestTitle(test.title, test.parent), {
                 status_id: testrail_interface_1.Status.Untested,
                 comment: `Execution time: ${test.duration}ms`,
                 elapsed: `${test.duration / 1000}s`
@@ -59,7 +59,7 @@ class CypressTestRailReporter extends mocha_1.reporters.Spec {
             yield this.evaluateGlobalCommandsFromTitle(test);
         }));
         runner.on(EVENT_TEST_FAIL, (test) => __awaiter(this, void 0, void 0, function* () {
-            return this.testRail.publishResult(test.title, {
+            return this.testRail.publishResult(utils_1.getTestTitle(test.title, test.parent), {
                 status_id: testrail_interface_1.Status.Failed,
                 comment: `${test.err.message}`,
                 elapsed: `${test.duration / 1000}s`
@@ -69,9 +69,9 @@ class CypressTestRailReporter extends mocha_1.reporters.Spec {
             // await this.testRail.closeRun(); // do we want to close runs?
         }));
     }
-    evaluateGlobalCommandsFromTitle(title) {
+    evaluateGlobalCommandsFromTitle(test) {
         return __awaiter(this, void 0, void 0, function* () {
-            utils_1.containsCloseRunFlag(title) && (yield this.testRail.closeRun());
+            utils_1.containsCloseRunFlag(test.title) && (yield this.testRail.closeRun());
         });
     }
     validateOptions(reporterOptions) {

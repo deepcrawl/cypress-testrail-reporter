@@ -2,7 +2,7 @@ import { reporters } from 'mocha';
 import * as moment from 'moment';
 import { TestRail } from './testrail';
 import { Status } from './testrail.interface';
-import { containsCloseRunFlag } from './utils';
+import { containsCloseRunFlag, getTestTitle } from './utils';
 const Mocha = require('mocha');
 var fs = require('fs');
 
@@ -46,19 +46,25 @@ export class CypressTestRailReporter extends reporters.Spec {
     });
 
     runner.on(EVENT_TEST_PASS, async (test) => {
-      return this.testRail.publishResult(test.title, {
-        status_id: Status.Passed,
-        comment: `Execution time: ${test.duration}ms`,
-        elapsed: `${test.duration/1000}s`
-      });
+      return this.testRail.publishResult(
+        getTestTitle(test.title, test.parent), 
+        {
+          status_id: Status.Passed,
+          comment: `Execution time: ${test.duration}ms`,
+          elapsed: `${test.duration/1000}s`
+        }
+      );
     });
 
     runner.on(EVENT_TEST_PENDING, async (test) => {
-      return this.testRail.publishResult(test.title, {
-        status_id: Status.Untested,
-        comment: `Execution time: ${test.duration}ms`,
-        elapsed: `${test.duration/1000}s`
-      });
+      return this.testRail.publishResult(
+        getTestTitle(test.title, test.parent), 
+        {
+          status_id: Status.Untested,
+          comment: `Execution time: ${test.duration}ms`,
+          elapsed: `${test.duration/1000}s`
+        }
+      );
     });
 
     runner.on(EVENT_TEST_BEGIN, async (test) => {
@@ -66,11 +72,14 @@ export class CypressTestRailReporter extends reporters.Spec {
     })
 
     runner.on(EVENT_TEST_FAIL, async (test) => {
-      return this.testRail.publishResult(test.title, {
-        status_id: Status.Failed,
-        comment: `${test.err.message}`,
-        elapsed: `${test.duration/1000}s`
-      });
+      return this.testRail.publishResult(
+        getTestTitle(test.title, test.parent), 
+        {
+          status_id: Status.Failed,
+          comment: `${test.err.message}`,
+          elapsed: `${test.duration/1000}s`
+        }
+      );
     });
 
     runner.on(EVENT_RUN_END, async () => {
@@ -78,8 +87,8 @@ export class CypressTestRailReporter extends reporters.Spec {
     });
   }
 
-  private async evaluateGlobalCommandsFromTitle(title: string) {
-    containsCloseRunFlag(title) && await this.testRail.closeRun();
+  private async evaluateGlobalCommandsFromTitle(test: any) {
+    containsCloseRunFlag(test.title) && await this.testRail.closeRun();
   }
 
   private validateOptions(reporterOptions) {
