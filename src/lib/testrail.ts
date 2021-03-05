@@ -10,8 +10,10 @@ export class TestRail {
   private cases: TestRailCase[] = [];
   private sections: TestRailSection[] = [];
 
-  public saveRunId(id:number) {
+  public async saveRunId(id:number) {
     this.runId = id;
+    await this.loadAllTestCases();
+    await this.loadAllSections();
   }
 
   private getRequestHeader() {

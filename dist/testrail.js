@@ -22,7 +22,11 @@ class TestRail {
         this.base = `${options.host}/index.php?/api/v2`;
     }
     saveRunId(id) {
-        this.runId = id;
+        return __awaiter(this, void 0, void 0, function* () {
+            this.runId = id;
+            yield this.loadAllTestCases();
+            yield this.loadAllSections();
+        });
     }
     getRequestHeader() {
         return { 'Content-Type': 'application/json' };
