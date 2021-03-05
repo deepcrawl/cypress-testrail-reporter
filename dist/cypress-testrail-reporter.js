@@ -15,6 +15,7 @@ const moment = require("moment");
 const testrail_1 = require("./testrail");
 const shared_1 = require("./shared");
 const testrail_interface_1 = require("./testrail.interface");
+var fs = require('fs');
 class CypressTestRailReporter extends mocha_1.reporters.Spec {
     constructor(runner, options) {
         super(runner);
@@ -23,16 +24,20 @@ class CypressTestRailReporter extends mocha_1.reporters.Spec {
             reporterOptions.password = process.env.CYPRESS_TESTRAIL_REPORTER_PASSWORD;
         }
         this.testRail = new testrail_1.TestRail(reporterOptions);
-        this.validate(reporterOptions, 'host');
-        this.validate(reporterOptions, 'username');
-        this.validate(reporterOptions, 'password');
-        this.validate(reporterOptions, 'projectId');
-        this.validate(reporterOptions, 'suiteId');
+        this.validateOptions(reporterOptions);
         runner.on('start', () => __awaiter(this, void 0, void 0, function* () {
             const executionDateTime = moment().format('MMM Do YYYY, HH:mm (Z)');
-            const name = `${reporterOptions.runName || 'Automated test run'} ${executionDateTime}`;
+            const name = `Automated test run ${executionDateTime}`;
             const description = 'For the Cypress run visit https://dashboard.cypress.io/#/projects/runs';
-            return this.testRail.createRun(name, description);
+            // const runId = 
+            fs.readFile('cypressRunId.txt', (err, data) => {
+                if (data) {
+                    this.testRail.saveRunId(data);
+                }
+                else {
+                    return this.testRail.createRun(name, description);
+                }
+            });
         }));
         runner.on('pass', (test) => __awaiter(this, void 0, void 0, function* () {
             const caseIds = shared_1.titleToCaseIds(test.title);
@@ -77,8 +82,15 @@ class CypressTestRailReporter extends mocha_1.reporters.Spec {
             }
         }));
         runner.on('end', () => __awaiter(this, void 0, void 0, function* () {
-            // await this.testRail.closeRun(); // do we want to close runs? 
+            // await this.testRail.closeRun(); // do we want to close runs?
         }));
+    }
+    validateOptions(reporterOptions) {
+        this.validate(reporterOptions, 'host');
+        this.validate(reporterOptions, 'username');
+        this.validate(reporterOptions, 'password');
+        this.validate(reporterOptions, 'projectId');
+        this.validate(reporterOptions, 'suiteId');
     }
     validate(options, name) {
         if (options == null) {

@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.TestRail = void 0;
 const axios_1 = require("axios");
 const chalk_1 = require("chalk");
+var fs = require('fs');
 class TestRail {
     constructor(options) {
         this.options = options;
@@ -47,6 +48,9 @@ class TestRail {
         console.log(chalk_1.default.magenta(`    | |  __/\\__ \\ |_| | \\ \\ (_| | | |`));
         console.log(chalk_1.default.magenta(`    |_|\\___||___/\\__|_|  \\_\\__,_|_|_|`));
     }
+    saveRunId(id) {
+        this.runId = id;
+    }
     createRun(name, description) {
         return __awaiter(this, void 0, void 0, function* () {
             if (this.options.includeAllInTestRun === false) {
@@ -72,6 +76,11 @@ class TestRail {
             })
                 .then(response => {
                 this.runId = response.data.id;
+                fs.writeFile('mynewfile3.txt', this.runId, function (err) {
+                    if (err)
+                        throw err;
+                    console.log('Saved!');
+                });
                 const listOfIdsMessage = 'Testrail reporter: Test case ids detected in test suite: ' + this.caseIds.join(', ');
                 console.log(chalk_1.default.magenta.bold(`Testrail reporter: Run with id ${this.runId} successfully created`));
                 console.log(chalk_1.default.magenta(listOfIdsMessage));
