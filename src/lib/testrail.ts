@@ -106,7 +106,7 @@ export class TestRail {
   private async createNewTestCase(title: string){
     return this.makeAxiosRequest(
       'post', 
-      `${this.base}/add_results_for_cases/${this.sections[0].id}`, 
+      `${this.base}/add_case/${this.sections[0].id}`, 
       JSON.stringify({ title, custom_automation_type: 0 })
     )
       .then((res) => res.data)

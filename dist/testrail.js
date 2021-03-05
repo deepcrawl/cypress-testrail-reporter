@@ -108,7 +108,7 @@ class TestRail {
     }
     createNewTestCase(title) {
         return __awaiter(this, void 0, void 0, function* () {
-            return this.makeAxiosRequest('post', `${this.base}/add_results_for_cases/${this.sections[0].id}`, JSON.stringify({ title, custom_automation_type: 0 }))
+            return this.makeAxiosRequest('post', `${this.base}/add_case/${this.sections[0].id}`, JSON.stringify({ title, custom_automation_type: 0 }))
                 .then((res) => res.data)
                 .catch(error => console.error(error));
         });
