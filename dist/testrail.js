@@ -128,7 +128,7 @@ class TestRail {
                 console.log('\n', chalk_1.default.magenta.bold(`Testrail reporter: Created a new test case: ${testTitle} with case id: ${newCase.id}`));
             }
             const caseId = testAlreadyHasTestCase.length > 0 ? testAlreadyHasTestCase[0].id : newCase.id;
-            return this.makeAxiosRequest('post', `${this.base}/add_result_for_case/${this.runId}`, JSON.stringify(Object.assign(Object.assign({}, result), { caseId: caseId })))
+            return this.makeAxiosRequest('post', `${this.base}/add_result_for_case/${this.runId}/${caseId}`, JSON.stringify(Object.assign({}, result)))
                 .then(response => {
                 console.log('\n', chalk_1.default.magenta.bold(`Testrail reporter: Outcome of following test cases saved in TestRail run with id:${this.runId}`));
                 console.log(chalk_1.default.magenta(`Test case ${caseId} with status id: ${result.status_id}`));

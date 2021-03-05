@@ -131,8 +131,8 @@ export class TestRail {
 
     return this.makeAxiosRequest(
       'post',
-      `${this.base}/add_result_for_case/${this.runId}`,
-      JSON.stringify({ ...result, caseId: caseId })
+      `${this.base}/add_result_for_case/${this.runId}/${caseId}`,
+      JSON.stringify({ ...result})
     )
       .then(response => {
         console.log('\n', chalk.magenta.bold(`Testrail reporter: Outcome of following test cases saved in TestRail run with id:${this.runId}`));
