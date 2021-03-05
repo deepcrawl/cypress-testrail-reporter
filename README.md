@@ -33,16 +33,34 @@ Add reporter to your `cypress.json`:
 }
 ```
 
-Your Cypress tests should include the ID of your TestRail test case. Make sure your test case IDs are distinct from your test titles:
+This reporter automatically looks for a test case with same name and if there is one it uploads the results. If there is no sucha a test case it will make new one and then upload the results.
 
-```Javascript
-// Good:
-it("C123 C124 Can authenticate a valid user", ...
-it("Can authenticate a valid user C321", ...
+### COMMANDS
 
-// Bad:
-it("C123Can authenticate a valid user", ...
-it("Can authenticate a valid userC123", ...
+#### `#COMMAND:closeRun#`
+
+This command notifies the reporter  that at <b>AT THE BEGINNING</b> of the test execution the reporter should call test rail to close the run.
+
+```
+describe("Test Rail synchronization test", function () {
+  it("this test will call for closing the run #COMMAND:closeRun#", async function () {
+    await cy.wait(10000);
+    expect(1).equal(1);
+  });
+});
+```
+
+#### `#COMMAND:noReport#`
+
+This command notifies the reporter that this test should not be reported.
+
+```
+describe("Test Rail synchronization test", function () {
+  it("this test will call for closing the run #COMMAND:noReport#", async function () {
+    await cy.wait(10000);
+    expect(1).equal(1);
+  });
+});
 ```
 
 ## Reporter Options

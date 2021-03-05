@@ -1,7 +1,7 @@
-import axios from 'axios';
+import axios, { Method } from 'axios';
 import chalk from 'chalk';
 import { TestRailOptions, TestRailResult , TestRailCase, TestRailSection} from './testrail.interface';
-import { printCoolAscii } from './utils';
+import { containesNoReportFlag, printCoolAscii } from './utils';
 var fs = require('fs');
 
 export class TestRail {
@@ -10,10 +10,18 @@ export class TestRail {
   private cases: TestRailCase[] = [];
   private sections: TestRailSection[] = [];
 
-  public async saveRunId(id:number) {
-    this.runId = id;
+  constructor(private options: TestRailOptions) {
+    this.base = `${options.host}/index.php?/api/v2`;
+  }
+
+  private async initialize() {
     await this.loadAllTestCases();
     await this.loadAllSections();
+  }
+
+  public async saveRunId(id:number) {
+    this.runId = id;
+    await this.initialize();
   }
 
   private getRequestHeader() {
@@ -27,11 +35,7 @@ export class TestRail {
     }
   }
 
-  constructor(private options: TestRailOptions) {
-    this.base = `${options.host}/index.php?/api/v2`;
-  }
-
-  private async makeAxiosRequest(method: 'get' | 'post', url: string, data?: string) {
+  private async makeAxiosRequest(method: Method, url: string, data?: string) {
     return axios({
       method: method,
       url: url,
@@ -53,14 +57,8 @@ export class TestRail {
 
   public async getCases () {
     let url = `${this.base}/get_cases/${this.options.projectId}&suite_id=${this.options.suiteId}`
-    
-    if (this.options.groupId) {
-      url += `&section_id=${this.options.groupId}`
-    }
-
-    if (this.options.filter) {
-      url += `&filter=${this.options.filter}`
-    }
+    url = this.options.groupId ? url + `&section_id=${this.options.groupId}` : url;
+    url = this.options.filter ? url + `&filter=${this.options.filter}` : url;
 
     return this.makeAxiosRequest('get', url)
       .then((response) => response.data)
@@ -73,16 +71,18 @@ export class TestRail {
 
   public async createRun(name: string, description: string) {
 
-    await this.loadAllTestCases();
-    await this.loadAllSections();
-
+    await this.initialize();
     printCoolAscii();
 
-    return this.makeAxiosRequest('post', `${this.base}/add_run/${this.options.projectId}`, JSON.stringify({
-      suite_id: this.options.suiteId,
-      name,
-      description,
-    }))
+    return this.makeAxiosRequest(
+      'post', 
+      `${this.base}/add_run/${this.options.projectId}`, 
+      JSON.stringify({
+        suite_id: this.options.suiteId,
+        name,
+        description,
+      })
+    )
       .then(response => {
         this.runId = response.data.id;
         fs.writeFile(this.options.runIdFileLocation, this.runId, function (err) {
@@ -117,6 +117,8 @@ export class TestRail {
 
   public async publishResult(testTitle: string, result: TestRailResult){
 
+    if (containesNoReportFlag(testTitle)) return;
+
     const testAlreadyHasTestCase = this.cases.filter((c) => {
       c.title === testTitle;
     })
@@ -139,7 +141,8 @@ export class TestRail {
         console.log(chalk.magenta(`Test case ${caseId} with status id: ${result.status_id}`))
         console.log('\n');
         return response;
-      });
+      })
+      .catch(error => console.error(error));
   }
 
   public closeRun() {
@@ -153,4 +156,6 @@ export class TestRail {
       })
       .catch(error => console.error(error));
   }
+
+  
 }

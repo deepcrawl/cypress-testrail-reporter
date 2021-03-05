@@ -1,9 +1,20 @@
 import { reporters } from 'mocha';
 import * as moment from 'moment';
 import { TestRail } from './testrail';
-import { titleToCaseIds } from './shared';
 import { Status } from './testrail.interface';
+import { containsCloseRunFlag } from './utils';
+const Mocha = require('mocha');
 var fs = require('fs');
+
+// for more states please see https://mochajs.org/api/runner.js.html
+const {
+  EVENT_RUN_BEGIN,
+  EVENT_RUN_END,
+  EVENT_TEST_PENDING,
+  EVENT_TEST_FAIL,
+  EVENT_TEST_PASS,
+  EVENT_TEST_BEGIN
+} = Mocha.Runner.constants;
 
 export class CypressTestRailReporter extends reporters.Spec {
   private testRail: TestRail;
@@ -20,7 +31,7 @@ export class CypressTestRailReporter extends reporters.Spec {
     this.testRail = new TestRail(reporterOptions);
     this.validateOptions(reporterOptions)
 
-    runner.on('start', async () => {
+    runner.on(EVENT_RUN_BEGIN, async () => {
       const executionDateTime = moment().format('MMM Do YYYY, HH:mm (Z)');
       const name = `Automated test run ${executionDateTime}`;
       const description = 'For the Cypress run visit https://dashboard.cypress.io/#/projects/runs';
@@ -34,7 +45,7 @@ export class CypressTestRailReporter extends reporters.Spec {
      
     });
 
-    runner.on('pass', async (test) => {
+    runner.on(EVENT_TEST_PASS, async (test) => {
       return this.testRail.publishResult(test.title, {
         status_id: Status.Passed,
         comment: `Execution time: ${test.duration}ms`,
@@ -42,42 +53,33 @@ export class CypressTestRailReporter extends reporters.Spec {
       });
     });
 
-    runner.on('pending', async (test) => {
-      // const caseIds = titleToCaseIds(test.title);
-      // if (caseIds.length > 0) {
-      //   const results = caseIds.map(caseId => {
-      //     return {
-      //       case_id: caseId,
-      //       status_id: Status.Untested,
-      //       comment: `Execution time: ${test.duration}ms`,
-      //       elapsed: `${test.duration/1000}s`
-      //     };
-      //   });
-      //   return this.testRail.publishResults(results);
-      // }
+    runner.on(EVENT_TEST_PENDING, async (test) => {
+      return this.testRail.publishResult(test.title, {
+        status_id: Status.Untested,
+        comment: `Execution time: ${test.duration}ms`,
+        elapsed: `${test.duration/1000}s`
+      });
     });
 
-    runner.on('fail', async (test) => {
-      // const caseIds = titleToCaseIds(test.title);
-      // if (caseIds.length > 0) {
-      //   const results = caseIds.map(caseId => {
-      //     return {
-      //       case_id: caseId,
-      //       status_id: Status.Failed,
-      //       comment: `${test.err.message}`,
-      //       elapsed: `${test.duration/1000}s`
-      //     };
-      //   });
-      //   return this.testRail.publishResults(results);
-      // }
+    runner.on(EVENT_TEST_BEGIN, async (test) => {
+      this.evaluateGlobalCommandsFromTitle(test) ;
+    })
+
+    runner.on(EVENT_TEST_FAIL, async (test) => {
+      return this.testRail.publishResult(test.title, {
+        status_id: Status.Failed,
+        comment: `${test.err.message}`,
+        elapsed: `${test.duration/1000}s`
+      });
     });
 
-    runner.on('end', async () => {
-
-      
-
+    runner.on(EVENT_RUN_END, async () => {
       // await this.testRail.closeRun(); // do we want to close runs?
     });
+  }
+
+  private async evaluateGlobalCommandsFromTitle(title: string) {
+    containsCloseRunFlag(title) && await this.testRail.closeRun();
   }
 
   private validateOptions(reporterOptions) {

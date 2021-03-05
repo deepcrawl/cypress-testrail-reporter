@@ -21,11 +21,16 @@ class TestRail {
         this.sections = [];
         this.base = `${options.host}/index.php?/api/v2`;
     }
+    initialize() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.loadAllTestCases();
+            yield this.loadAllSections();
+        });
+    }
     saveRunId(id) {
         return __awaiter(this, void 0, void 0, function* () {
             this.runId = id;
-            yield this.loadAllTestCases();
-            yield this.loadAllSections();
+            yield this.initialize();
         });
     }
     getRequestHeader() {
@@ -63,12 +68,8 @@ class TestRail {
     getCases() {
         return __awaiter(this, void 0, void 0, function* () {
             let url = `${this.base}/get_cases/${this.options.projectId}&suite_id=${this.options.suiteId}`;
-            if (this.options.groupId) {
-                url += `&section_id=${this.options.groupId}`;
-            }
-            if (this.options.filter) {
-                url += `&filter=${this.options.filter}`;
-            }
+            url = this.options.groupId ? url + `&section_id=${this.options.groupId}` : url;
+            url = this.options.filter ? url + `&filter=${this.options.filter}` : url;
             return this.makeAxiosRequest('get', url)
                 .then((response) => response.data)
                 .catch(error => console.error(error));
@@ -81,8 +82,7 @@ class TestRail {
     }
     createRun(name, description) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.loadAllTestCases();
-            yield this.loadAllSections();
+            yield this.initialize();
             utils_1.printCoolAscii();
             return this.makeAxiosRequest('post', `${this.base}/add_run/${this.options.projectId}`, JSON.stringify({
                 suite_id: this.options.suiteId,
@@ -119,6 +119,8 @@ class TestRail {
     }
     publishResult(testTitle, result) {
         return __awaiter(this, void 0, void 0, function* () {
+            if (utils_1.containesNoReportFlag(testTitle))
+                return;
             const testAlreadyHasTestCase = this.cases.filter((c) => {
                 c.title === testTitle;
             });
@@ -134,7 +136,8 @@ class TestRail {
                 console.log(chalk_1.default.magenta(`Test case ${caseId} with status id: ${result.status_id}`));
                 console.log('\n');
                 return response;
-            });
+            })
+                .catch(error => console.error(error));
         });
     }
     closeRun() {
