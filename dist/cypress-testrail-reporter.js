@@ -56,7 +56,7 @@ class CypressTestRailReporter extends mocha_1.reporters.Spec {
             });
         }));
         runner.on(EVENT_TEST_BEGIN, (test) => __awaiter(this, void 0, void 0, function* () {
-            this.evaluateGlobalCommandsFromTitle(test);
+            yield this.evaluateGlobalCommandsFromTitle(test);
         }));
         runner.on(EVENT_TEST_FAIL, (test) => __awaiter(this, void 0, void 0, function* () {
             return this.testRail.publishResult(test.title, {

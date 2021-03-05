@@ -62,7 +62,7 @@ export class CypressTestRailReporter extends reporters.Spec {
     });
 
     runner.on(EVENT_TEST_BEGIN, async (test) => {
-      this.evaluateGlobalCommandsFromTitle(test) ;
+      await this.evaluateGlobalCommandsFromTitle(test) ;
     })
 
     runner.on(EVENT_TEST_FAIL, async (test) => {

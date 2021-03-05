@@ -10,10 +10,10 @@ export function printCoolAscii() {
 
 export function containesNoReportFlag(title: string) {
     const noReportRegex: RegExp = /#COMMAND:noReport#/g;
-    return noReportRegex.exec(title);
+    return noReportRegex.exec(title) !== null;
 }
 
 export function containsCloseRunFlag(title: string) {
     let closeRunRegex: RegExp = /#COMMAND:closeRun#/g;
-    return closeRunRegex.exec(title);
+    return closeRunRegex.exec(title) !== null;
   }
