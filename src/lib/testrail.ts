@@ -1,6 +1,6 @@
 import axios, { Method } from 'axios';
 import chalk from 'chalk';
-import { TestRailOptions, TestRailResult , TestRailCase, TestRailSection} from './testrail.interface';
+import { TestRailOptions, TestRailResult , TestRailCase, TestRailSection, Status} from './testrail.interface';
 import { containesNoReportFlag, printCoolAscii } from './utils';
 var fs = require('fs');
 
@@ -141,15 +141,18 @@ export class TestRail {
     const caseId:number = testAlreadyHasTestCase.length > 0 ? testAlreadyHasTestCase[0].id : newCase.id;
 
     try {
-      const response = await this.makeAxiosRequest(
-        'post',
-        `${this.base}/add_result_for_case/${this.runId}/${caseId}`,
-        JSON.stringify({ ...result})
-      )
-      console.log('\n', chalk.magenta.bold(`Testrail reporter: Outcome of following test cases saved in TestRail run with id:${this.runId}`));
-      console.log(chalk.magenta(`Test case ${caseId} with status id: ${result.status_id}`))
-      console.log('\n');
-      return response;
+      // no need to push untested result as it is a default status.
+      if (result.status_id !== Status.Untested) {
+        const response = await this.makeAxiosRequest(
+          'post',
+          `${this.base}/add_result_for_case/${this.runId}/${caseId}`,
+          JSON.stringify({ ...result})
+        )
+        console.log('\n', chalk.magenta.bold(`Testrail reporter: Outcome of following test cases saved in TestRail run with id:${this.runId}`));
+        console.log(chalk.magenta(`Test case ${caseId} with status id: ${result.status_id}`))
+        console.log('\n');
+        return response;
+      }
     } catch (e) {
       console.error(e)
     }

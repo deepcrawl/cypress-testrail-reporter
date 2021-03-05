@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.TestRail = void 0;
 const axios_1 = require("axios");
 const chalk_1 = require("chalk");
+const testrail_interface_1 = require("./testrail.interface");
 const utils_1 = require("./utils");
 var fs = require('fs');
 class TestRail {
@@ -145,11 +146,14 @@ class TestRail {
             }
             const caseId = testAlreadyHasTestCase.length > 0 ? testAlreadyHasTestCase[0].id : newCase.id;
             try {
-                const response = yield this.makeAxiosRequest('post', `${this.base}/add_result_for_case/${this.runId}/${caseId}`, JSON.stringify(Object.assign({}, result)));
-                console.log('\n', chalk_1.default.magenta.bold(`Testrail reporter: Outcome of following test cases saved in TestRail run with id:${this.runId}`));
-                console.log(chalk_1.default.magenta(`Test case ${caseId} with status id: ${result.status_id}`));
-                console.log('\n');
-                return response;
+                // no need to push untested result as it is a default status.
+                if (result.status_id !== testrail_interface_1.Status.Untested) {
+                    const response = yield this.makeAxiosRequest('post', `${this.base}/add_result_for_case/${this.runId}/${caseId}`, JSON.stringify(Object.assign({}, result)));
+                    console.log('\n', chalk_1.default.magenta.bold(`Testrail reporter: Outcome of following test cases saved in TestRail run with id:${this.runId}`));
+                    console.log(chalk_1.default.magenta(`Test case ${caseId} with status id: ${result.status_id}`));
+                    console.log('\n');
+                    return response;
+                }
             }
             catch (e) {
                 console.error(e);
