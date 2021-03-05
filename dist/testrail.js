@@ -76,7 +76,7 @@ class TestRail {
             })
                 .then(response => {
                 this.runId = response.data.id;
-                fs.writeFile('mynewfile3.txt', this.runId, function (err) {
+                fs.writeFile(this.options.runIdFileLocation, this.runId, function (err) {
                     if (err)
                         throw err;
                     console.log('Saved!');

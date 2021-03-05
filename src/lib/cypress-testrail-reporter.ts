@@ -25,7 +25,7 @@ export class CypressTestRailReporter extends reporters.Spec {
       const name = `Automated test run ${executionDateTime}`;
       const description = 'For the Cypress run visit https://dashboard.cypress.io/#/projects/runs';
       // const runId = 
-      fs.readFile('cypressRunId.txt', (err, data) => {
+      fs.readFile(reporterOptions.runIdFileLocation, (err, data) => {
        if (data) {
         this.testRail.saveRunId(data);
        } else {
@@ -95,6 +95,7 @@ export class CypressTestRailReporter extends reporters.Spec {
     this.validate(reporterOptions, 'password');
     this.validate(reporterOptions, 'projectId');
     this.validate(reporterOptions, 'suiteId');
+    this.validate(reporterOptions, 'runIdFileLocation');
   }
 
   private validate(options, name: string) {

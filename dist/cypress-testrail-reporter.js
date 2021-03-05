@@ -30,7 +30,7 @@ class CypressTestRailReporter extends mocha_1.reporters.Spec {
             const name = `Automated test run ${executionDateTime}`;
             const description = 'For the Cypress run visit https://dashboard.cypress.io/#/projects/runs';
             // const runId = 
-            fs.readFile('cypressRunId.txt', (err, data) => {
+            fs.readFile(reporterOptions.runIdFileLocation, (err, data) => {
                 if (data) {
                     this.testRail.saveRunId(data);
                 }
@@ -91,6 +91,7 @@ class CypressTestRailReporter extends mocha_1.reporters.Spec {
         this.validate(reporterOptions, 'password');
         this.validate(reporterOptions, 'projectId');
         this.validate(reporterOptions, 'suiteId');
+        this.validate(reporterOptions, 'runIdFileLocation');
     }
     validate(options, name) {
         if (options == null) {
