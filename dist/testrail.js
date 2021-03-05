@@ -125,6 +125,9 @@ class TestRail {
     }
     createNewTestCase(title) {
         return __awaiter(this, void 0, void 0, function* () {
+            if (this.sections.length <= 0) {
+                yield this.loadAllSections();
+            }
             try {
                 const res = yield this.makeAxiosRequest('post', `${this.base}/add_case/${this.sections[0].id}`, JSON.stringify({ title, custom_automation_type: 0 }));
                 return res.data;

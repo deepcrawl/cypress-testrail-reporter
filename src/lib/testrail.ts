@@ -114,6 +114,9 @@ export class TestRail {
   }
 
   private async createNewTestCase(title: string){
+    if (this.sections.length <= 0) {
+      await this.loadAllSections();
+    } 
     try {
       const res = await this.makeAxiosRequest(
         'post', 
