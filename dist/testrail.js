@@ -139,6 +139,7 @@ class TestRail {
         });
     }
     closeRun() {
+        console.log(chalk_1.default.magenta.bold(`Testrail reporter: Run with id ${this.runId} will be closed`));
         return this.makeAxiosRequest('post', `${this.base}/close_run/${this.runId}`)
             .then((response) => {
             console.log(chalk_1.default.magenta.bold(`Testrail reporter: Run with id ${this.runId} closed successfully`));

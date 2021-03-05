@@ -13,12 +13,16 @@ function printCoolAscii() {
 exports.printCoolAscii = printCoolAscii;
 function containesNoReportFlag(title) {
     const noReportRegex = /#COMMAND:noReport#/g;
-    return noReportRegex.exec(title) !== null;
+    const a = noReportRegex.exec(title);
+    console.log('title:', title, 'Found norRep:', a);
+    return a;
 }
 exports.containesNoReportFlag = containesNoReportFlag;
 function containsCloseRunFlag(title) {
-    let closeRunRegex = /#COMMAND:closeRun#/g;
-    return closeRunRegex.exec(title) !== null;
+    const closeRunRegex = /#COMMAND:closeRun#/g;
+    const a = closeRunRegex.exec(title);
+    console.log('title:', title, 'Found closeRun:', a);
+    return a;
 }
 exports.containsCloseRunFlag = containsCloseRunFlag;
 //# sourceMappingURL=utils.js.map

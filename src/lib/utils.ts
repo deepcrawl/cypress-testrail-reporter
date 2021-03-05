@@ -10,10 +10,14 @@ export function printCoolAscii() {
 
 export function containesNoReportFlag(title: string) {
     const noReportRegex: RegExp = /#COMMAND:noReport#/g;
-    return noReportRegex.exec(title) !== null;
+    const a = noReportRegex.exec(title);
+    console.log('title:', title, 'Found norRep:', a)
+    return a;
 }
 
 export function containsCloseRunFlag(title: string) {
-    let closeRunRegex: RegExp = /#COMMAND:closeRun#/g;
-    return closeRunRegex.exec(title) !== null;
+    const closeRunRegex: RegExp = /#COMMAND:closeRun#/g;
+    const a = closeRunRegex.exec(title);
+    console.log('title:', title, 'Found closeRun:', a)
+    return a;
   }
