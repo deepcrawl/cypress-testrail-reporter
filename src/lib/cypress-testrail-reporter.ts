@@ -83,7 +83,7 @@ export class CypressTestRailReporter extends reporters.Spec {
     });
 
     runner.on(EVENT_RUN_END, async () => {
-      // await this.testRail.closeRun(); // do we want to close runs?
+      // plase see the readme.MD -> this is somehow broken right now because of the kill signal from mocha.
     });
   }
 

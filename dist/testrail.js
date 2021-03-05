@@ -55,9 +55,13 @@ class TestRail {
     }
     getSections() {
         return __awaiter(this, void 0, void 0, function* () {
-            return this.makeAxiosRequest('get', `${this.base}/get_sections/${this.options.projectId}&suite_id=${this.options.suiteId}`)
-                .then((response) => response.data)
-                .catch(error => console.error(error));
+            try {
+                const response = yield this.makeAxiosRequest('get', `${this.base}/get_sections/${this.options.projectId}&suite_id=${this.options.suiteId}`);
+                return response.data;
+            }
+            catch (e) {
+                console.error(e);
+            }
         });
     }
     loadAllSections() {
@@ -70,9 +74,13 @@ class TestRail {
             let url = `${this.base}/get_cases/${this.options.projectId}&suite_id=${this.options.suiteId}`;
             url = this.options.groupId ? url + `&section_id=${this.options.groupId}` : url;
             url = this.options.filter ? url + `&filter=${this.options.filter}` : url;
-            return this.makeAxiosRequest('get', url)
-                .then((response) => response.data)
-                .catch(error => console.error(error));
+            try {
+                const response = yield this.makeAxiosRequest('get', url);
+                return response.data;
+            }
+            catch (e) {
+                console.error(e);
+            }
         });
     }
     loadAllTestCases() {
@@ -84,12 +92,12 @@ class TestRail {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.initialize();
             utils_1.printCoolAscii();
-            return this.makeAxiosRequest('post', `${this.base}/add_run/${this.options.projectId}`, JSON.stringify({
-                suite_id: this.options.suiteId,
-                name,
-                description,
-            }))
-                .then(response => {
+            try {
+                const response = yield this.makeAxiosRequest('post', `${this.base}/add_run/${this.options.projectId}`, JSON.stringify({
+                    suite_id: this.options.suiteId,
+                    name,
+                    description,
+                }));
                 this.runId = response.data.id;
                 fs.writeFile(this.options.runIdFileLocation, this.runId, (err) => {
                     if (err)
@@ -97,24 +105,32 @@ class TestRail {
                     console.log(chalk_1.default.magenta.bold(`Testrail reporter: File ${this.options.runIdFileLocation} created with id: ${this.runId}`));
                 });
                 console.log(chalk_1.default.magenta.bold(`Testrail reporter: Run with id ${this.runId} successfully created`));
-            })
-                .catch(error => console.error(error));
+            }
+            catch (e) {
+                console.error(e);
+            }
         });
     }
     deleteRun() {
         return __awaiter(this, void 0, void 0, function* () {
-            return this.makeAxiosRequest('post', `${this.base}/delete_run/${this.runId}`)
-                .then(() => {
-                console.log(chalk_1.default.magenta.bold(`Testrail reporter: Run successfully deleted`));
-            })
-                .catch(error => console.error(error));
+            try {
+                yield this.makeAxiosRequest('post', `${this.base}/delete_run/${this.runId}`);
+            }
+            catch (e) {
+                console.error(e);
+            }
+            console.log(chalk_1.default.magenta.bold(`Testrail reporter: Run successfully deleted`));
         });
     }
     createNewTestCase(title) {
         return __awaiter(this, void 0, void 0, function* () {
-            return this.makeAxiosRequest('post', `${this.base}/add_case/${this.sections[0].id}`, JSON.stringify({ title, custom_automation_type: 0 }))
-                .then((res) => res.data)
-                .catch(error => console.error(error));
+            try {
+                const res = yield this.makeAxiosRequest('post', `${this.base}/add_case/${this.sections[0].id}`, JSON.stringify({ title, custom_automation_type: 0 }));
+                return res.data;
+            }
+            catch (e) {
+                console.error(e);
+            }
         });
     }
     publishResult(testTitle, result) {
@@ -128,24 +144,30 @@ class TestRail {
                 console.log('\n', chalk_1.default.magenta.bold(`Testrail reporter: Created a new test case: ${testTitle} with case id: ${newCase.id}`));
             }
             const caseId = testAlreadyHasTestCase.length > 0 ? testAlreadyHasTestCase[0].id : newCase.id;
-            return this.makeAxiosRequest('post', `${this.base}/add_result_for_case/${this.runId}/${caseId}`, JSON.stringify(Object.assign({}, result)))
-                .then(response => {
+            try {
+                const response = yield this.makeAxiosRequest('post', `${this.base}/add_result_for_case/${this.runId}/${caseId}`, JSON.stringify(Object.assign({}, result)));
                 console.log('\n', chalk_1.default.magenta.bold(`Testrail reporter: Outcome of following test cases saved in TestRail run with id:${this.runId}`));
                 console.log(chalk_1.default.magenta(`Test case ${caseId} with status id: ${result.status_id}`));
                 console.log('\n');
                 return response;
-            })
-                .catch(error => console.error(error));
+            }
+            catch (e) {
+                console.error(e);
+            }
         });
     }
     closeRun() {
-        console.log(chalk_1.default.magenta.bold(`Testrail reporter: Run with id ${this.runId} will be closed`));
-        return this.makeAxiosRequest('post', `${this.base}/close_run/${this.runId}`)
-            .then((response) => {
-            console.log(chalk_1.default.magenta.bold(`Testrail reporter: Run with id ${this.runId} closed successfully`));
-            return response;
-        })
-            .catch(error => console.error(error));
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log(chalk_1.default.magenta.bold(`Testrail reporter: Run with id ${this.runId} will be closed`));
+            try {
+                const response = yield this.makeAxiosRequest('post', `${this.base}/close_run/${this.runId}`);
+                console.log(chalk_1.default.magenta.bold(`Testrail reporter: Run with id ${this.runId} closed successfully`));
+                return response;
+            }
+            catch (e) {
+                console.error(e);
+            }
+        });
     }
 }
 exports.TestRail = TestRail;

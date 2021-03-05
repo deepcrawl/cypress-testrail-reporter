@@ -66,7 +66,7 @@ class CypressTestRailReporter extends mocha_1.reporters.Spec {
             });
         }));
         runner.on(EVENT_RUN_END, () => __awaiter(this, void 0, void 0, function* () {
-            // await this.testRail.closeRun(); // do we want to close runs?
+            // plase see the readme.MD -> this is somehow broken right now because of the kill signal from mocha.
         }));
     }
     evaluateGlobalCommandsFromTitle(test) {
