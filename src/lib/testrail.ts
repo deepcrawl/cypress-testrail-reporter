@@ -1,6 +1,7 @@
 import axios from 'axios';
 import chalk from 'chalk';
 import { TestRailOptions, TestRailResult } from './testrail.interface';
+var fs = require('fs');
 
 export class TestRail {
   private base: String;
@@ -42,6 +43,10 @@ export class TestRail {
     console.log(chalk.magenta(`    |_|\\___||___/\\__|_|  \\_\\__,_|_|_|`));
   }
 
+  public saveRunId(id:number) {
+    this.runId = id;
+  }
+
   public async createRun (name: string, description: string) {
     if (this.options.includeAllInTestRun === false){
       this.includeAll = false;
@@ -68,6 +73,10 @@ export class TestRail {
     })
       .then(response => {
         this.runId = response.data.id;
+        fs.writeFile('mynewfile3.txt', this.runId, function (err) {
+          if (err) throw err;
+          console.log('Saved!');
+        });
         const listOfIdsMessage = 'Testrail reporter: Test case ids detected in test suite: ' + this.caseIds.join(', ');
         console.log(chalk.magenta.bold(`Testrail reporter: Run with id ${this.runId} successfully created`));
         console.log(chalk.magenta(listOfIdsMessage));

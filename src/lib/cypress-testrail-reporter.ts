@@ -3,6 +3,7 @@ import * as moment from 'moment';
 import { TestRail } from './testrail';
 import { titleToCaseIds } from './shared';
 import { Status } from './testrail.interface';
+var fs = require('fs');
 
 export class CypressTestRailReporter extends reporters.Spec {
   private testRail: TestRail;
@@ -17,17 +18,21 @@ export class CypressTestRailReporter extends reporters.Spec {
     }
 
     this.testRail = new TestRail(reporterOptions);
-    this.validate(reporterOptions, 'host');
-    this.validate(reporterOptions, 'username');
-    this.validate(reporterOptions, 'password');
-    this.validate(reporterOptions, 'projectId');
-    this.validate(reporterOptions, 'suiteId');
+    this.validateOptions(reporterOptions)
 
     runner.on('start', async () => {
       const executionDateTime = moment().format('MMM Do YYYY, HH:mm (Z)');
-      const name = `${reporterOptions.runName || 'Automated test run'} ${executionDateTime}`;
+      const name = `Automated test run ${executionDateTime}`;
       const description = 'For the Cypress run visit https://dashboard.cypress.io/#/projects/runs';
-      return this.testRail.createRun(name, description);
+      // const runId = 
+      fs.readFile('cypressRunId.txt', (err, data) => {
+       if (data) {
+        this.testRail.saveRunId(data);
+       } else {
+        return this.testRail.createRun(name, description);
+       }
+      });
+     
     });
 
     runner.on('pass', async (test) => {
@@ -77,8 +82,19 @@ export class CypressTestRailReporter extends reporters.Spec {
     });
 
     runner.on('end', async () => {
-      // await this.testRail.closeRun(); // do we want to close runs? 
+
+      
+
+      // await this.testRail.closeRun(); // do we want to close runs?
     });
+  }
+
+  private validateOptions(reporterOptions) {
+    this.validate(reporterOptions, 'host');
+    this.validate(reporterOptions, 'username');
+    this.validate(reporterOptions, 'password');
+    this.validate(reporterOptions, 'projectId');
+    this.validate(reporterOptions, 'suiteId');
   }
 
   private validate(options, name: string) {
