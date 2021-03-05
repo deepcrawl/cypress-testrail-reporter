@@ -94,7 +94,7 @@ class TestRail {
                 fs.writeFile(this.options.runIdFileLocation, this.runId, function (err) {
                     if (err)
                         throw err;
-                    console.log('Saved!');
+                    console.log(chalk_1.default.magenta.bold(`Testrail reporter: File ${this.options.runIdFileLocation} created with id: ${this.runId}`));
                 });
                 console.log(chalk_1.default.magenta.bold(`Testrail reporter: Run with id ${this.runId} successfully created`));
             })
@@ -121,9 +121,7 @@ class TestRail {
         return __awaiter(this, void 0, void 0, function* () {
             if (utils_1.containesNoReportFlag(testTitle))
                 return;
-            const testAlreadyHasTestCase = this.cases.filter((c) => {
-                c.title === testTitle;
-            });
+            const testAlreadyHasTestCase = this.cases.filter((c) => c.title === testTitle);
             let newCase;
             if (testAlreadyHasTestCase.length <= 0) {
                 newCase = yield this.createNewTestCase(testTitle);

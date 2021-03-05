@@ -87,7 +87,7 @@ export class TestRail {
         this.runId = response.data.id;
         fs.writeFile(this.options.runIdFileLocation, this.runId, function (err) {
           if (err) throw err;
-          console.log('Saved!');
+          console.log(chalk.magenta.bold(`Testrail reporter: File ${this.options.runIdFileLocation} created with id: ${this.runId}`));
         });
         console.log(chalk.magenta.bold(`Testrail reporter: Run with id ${this.runId} successfully created`));
       })
@@ -119,9 +119,7 @@ export class TestRail {
 
     if (containesNoReportFlag(testTitle)) return;
 
-    const testAlreadyHasTestCase = this.cases.filter((c) => {
-      c.title === testTitle;
-    })
+    const testAlreadyHasTestCase = this.cases.filter((c) => c.title === testTitle)
 
     let newCase: TestRailCase;
     if (testAlreadyHasTestCase.length <= 0) {
