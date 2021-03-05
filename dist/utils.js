@@ -23,7 +23,10 @@ function containsCloseRunFlag(title) {
 exports.containsCloseRunFlag = containsCloseRunFlag;
 function getTestTitle(title, parent) {
     let newTitle = (parent === null || parent === void 0 ? void 0 : parent.title) ? parent.title + ' > ' : '';
-    return newTitle + title;
+    // max title is 240 characters
+    newTitle = newTitle + title;
+    newTitle = newTitle.substring(newTitle.length - 240, newTitle.length);
+    return newTitle;
 }
 exports.getTestTitle = getTestTitle;
 //# sourceMappingURL=utils.js.map

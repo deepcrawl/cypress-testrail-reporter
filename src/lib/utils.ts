@@ -20,5 +20,8 @@ export function containsCloseRunFlag(title: string) {
 
 export function getTestTitle(title, parent) {
     let newTitle = parent?.title ? parent.title + ' > ' : '';
-    return newTitle + title;
+    // max title is 240 characters
+    newTitle = newTitle + title;
+    newTitle = newTitle.substring(newTitle.length - 240, newTitle.length)
+    return newTitle;
 }
