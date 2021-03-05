@@ -13,7 +13,6 @@ exports.CypressTestRailReporter = void 0;
 const mocha_1 = require("mocha");
 const moment = require("moment");
 const testrail_1 = require("./testrail");
-const shared_1 = require("./shared");
 const testrail_interface_1 = require("./testrail.interface");
 var fs = require('fs');
 class CypressTestRailReporter extends mocha_1.reporters.Spec {
@@ -40,46 +39,39 @@ class CypressTestRailReporter extends mocha_1.reporters.Spec {
             });
         }));
         runner.on('pass', (test) => __awaiter(this, void 0, void 0, function* () {
-            const caseIds = shared_1.titleToCaseIds(test.title);
-            if (caseIds.length > 0) {
-                const results = caseIds.map(caseId => {
-                    return {
-                        case_id: caseId,
-                        status_id: testrail_interface_1.Status.Passed,
-                        comment: `Execution time: ${test.duration}ms`,
-                        elapsed: `${test.duration / 1000}s`
-                    };
-                });
-                return this.testRail.publishResults(results);
-            }
+            return this.testRail.publishResult(test.title, {
+                status_id: testrail_interface_1.Status.Passed,
+                comment: `Execution time: ${test.duration}ms`,
+                elapsed: `${test.duration / 1000}s`
+            });
         }));
         runner.on('pending', (test) => __awaiter(this, void 0, void 0, function* () {
-            const caseIds = shared_1.titleToCaseIds(test.title);
-            if (caseIds.length > 0) {
-                const results = caseIds.map(caseId => {
-                    return {
-                        case_id: caseId,
-                        status_id: testrail_interface_1.Status.Untested,
-                        comment: `Execution time: ${test.duration}ms`,
-                        elapsed: `${test.duration / 1000}s`
-                    };
-                });
-                return this.testRail.publishResults(results);
-            }
+            // const caseIds = titleToCaseIds(test.title);
+            // if (caseIds.length > 0) {
+            //   const results = caseIds.map(caseId => {
+            //     return {
+            //       case_id: caseId,
+            //       status_id: Status.Untested,
+            //       comment: `Execution time: ${test.duration}ms`,
+            //       elapsed: `${test.duration/1000}s`
+            //     };
+            //   });
+            //   return this.testRail.publishResults(results);
+            // }
         }));
         runner.on('fail', (test) => __awaiter(this, void 0, void 0, function* () {
-            const caseIds = shared_1.titleToCaseIds(test.title);
-            if (caseIds.length > 0) {
-                const results = caseIds.map(caseId => {
-                    return {
-                        case_id: caseId,
-                        status_id: testrail_interface_1.Status.Failed,
-                        comment: `${test.err.message}`,
-                        elapsed: `${test.duration / 1000}s`
-                    };
-                });
-                return this.testRail.publishResults(results);
-            }
+            // const caseIds = titleToCaseIds(test.title);
+            // if (caseIds.length > 0) {
+            //   const results = caseIds.map(caseId => {
+            //     return {
+            //       case_id: caseId,
+            //       status_id: Status.Failed,
+            //       comment: `${test.err.message}`,
+            //       elapsed: `${test.duration/1000}s`
+            //     };
+            //   });
+            //   return this.testRail.publishResults(results);
+            // }
         }));
         runner.on('end', () => __awaiter(this, void 0, void 0, function* () {
             // await this.testRail.closeRun(); // do we want to close runs?

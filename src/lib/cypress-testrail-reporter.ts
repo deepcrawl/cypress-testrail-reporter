@@ -36,49 +36,41 @@ export class CypressTestRailReporter extends reporters.Spec {
     });
 
     runner.on('pass', async (test) => {
-      const caseIds = titleToCaseIds(test.title);
-      if (caseIds.length > 0) {
-        const results = caseIds.map(caseId => {
-          return {
-            case_id: caseId,
-            status_id: Status.Passed,
-            comment: `Execution time: ${test.duration}ms`,
-            elapsed: `${test.duration/1000}s`
-          };
-        });
-        return this.testRail.publishResults(results);
-      }
-     
+      return this.testRail.publishResult(test.title, {
+        status_id: Status.Passed,
+        comment: `Execution time: ${test.duration}ms`,
+        elapsed: `${test.duration/1000}s`
+      });
     });
 
     runner.on('pending', async (test) => {
-      const caseIds = titleToCaseIds(test.title);
-      if (caseIds.length > 0) {
-        const results = caseIds.map(caseId => {
-          return {
-            case_id: caseId,
-            status_id: Status.Untested,
-            comment: `Execution time: ${test.duration}ms`,
-            elapsed: `${test.duration/1000}s`
-          };
-        });
-        return this.testRail.publishResults(results);
-      }
+      // const caseIds = titleToCaseIds(test.title);
+      // if (caseIds.length > 0) {
+      //   const results = caseIds.map(caseId => {
+      //     return {
+      //       case_id: caseId,
+      //       status_id: Status.Untested,
+      //       comment: `Execution time: ${test.duration}ms`,
+      //       elapsed: `${test.duration/1000}s`
+      //     };
+      //   });
+      //   return this.testRail.publishResults(results);
+      // }
     });
 
     runner.on('fail', async (test) => {
-      const caseIds = titleToCaseIds(test.title);
-      if (caseIds.length > 0) {
-        const results = caseIds.map(caseId => {
-          return {
-            case_id: caseId,
-            status_id: Status.Failed,
-            comment: `${test.err.message}`,
-            elapsed: `${test.duration/1000}s`
-          };
-        });
-        return this.testRail.publishResults(results);
-      }
+      // const caseIds = titleToCaseIds(test.title);
+      // if (caseIds.length > 0) {
+      //   const results = caseIds.map(caseId => {
+      //     return {
+      //       case_id: caseId,
+      //       status_id: Status.Failed,
+      //       comment: `${test.err.message}`,
+      //       elapsed: `${test.duration/1000}s`
+      //     };
+      //   });
+      //   return this.testRail.publishResults(results);
+      // }
     });
 
     runner.on('end', async () => {

@@ -5,7 +5,6 @@ export interface TestRailOptions {
   projectId: number;
   suiteId: number;
   assignedToId?: number;
-  includeAllInTestRun?: boolean;
   groupId?: number;
   filter?: string;
   runIdFileLocation: string;
@@ -20,9 +19,9 @@ export enum Status {
 }
 
 export interface TestRailResult {
-  case_id: number;
   status_id: Status;
   comment?: String;
+  elapsed?: String;
 }
 
 export interface TestRailCase {
@@ -47,4 +46,14 @@ export interface TestRailCase {
   custom_steps_separated?: string;
   custom_mission?: string;
   custom_goals?: string;
+}
+
+export interface TestRailSection {
+  id: number;
+  suite_id: number;
+  name: string;
+  description: string | null;
+  parent_id: string | null;
+  display_order: number;
+  depth: number;
 }
