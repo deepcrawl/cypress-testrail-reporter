@@ -85,7 +85,7 @@ export class TestRail {
     )
       .then(response => {
         this.runId = response.data.id;
-        fs.writeFile(this.options.runIdFileLocation, this.runId, function (err) {
+        fs.writeFile(this.options.runIdFileLocation, this.runId, (err) => {
           if (err) throw err;
           console.log(chalk.magenta.bold(`Testrail reporter: File ${this.options.runIdFileLocation} created with id: ${this.runId}`));
         });
