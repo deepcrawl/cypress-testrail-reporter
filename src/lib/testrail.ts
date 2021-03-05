@@ -124,9 +124,10 @@ export class TestRail {
     let newCase: TestRailCase;
     if (testAlreadyHasTestCase.length <= 0) {
       newCase = await this.createNewTestCase(testTitle);
+      console.log('\n', chalk.magenta.bold(`Testrail reporter: Created a new test case: ${testTitle} with case id: ${newCase.id}`));
     }
 
-    const caseId:number = testAlreadyHasTestCase.length <= 0 ? testAlreadyHasTestCase[0].id : newCase.id;
+    const caseId:number = testAlreadyHasTestCase.length > 0 ? testAlreadyHasTestCase[0].id : newCase.id;
 
     return this.makeAxiosRequest(
       'post',

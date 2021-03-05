@@ -125,8 +125,9 @@ class TestRail {
             let newCase;
             if (testAlreadyHasTestCase.length <= 0) {
                 newCase = yield this.createNewTestCase(testTitle);
+                console.log('\n', chalk_1.default.magenta.bold(`Testrail reporter: Created a new test case: ${testTitle} with case id: ${newCase.id}`));
             }
-            const caseId = testAlreadyHasTestCase.length <= 0 ? testAlreadyHasTestCase[0].id : newCase.id;
+            const caseId = testAlreadyHasTestCase.length > 0 ? testAlreadyHasTestCase[0].id : newCase.id;
             return this.makeAxiosRequest('post', `${this.base}/add_result_for_case/${this.runId}`, JSON.stringify(Object.assign(Object.assign({}, result), { caseId: caseId })))
                 .then(response => {
                 console.log('\n', chalk_1.default.magenta.bold(`Testrail reporter: Outcome of following test cases saved in TestRail run with id:${this.runId}`));
