@@ -23,7 +23,7 @@ function containsCloseRunFlag(title) {
 exports.containsCloseRunFlag = containsCloseRunFlag;
 function getTestTitle(title, parent) {
     const titleToUse = title.substring(title.length - 140, title.length);
-    const parentTitleToUse = (parent === null || parent === void 0 ? void 0 : parent.title) ? parent === null || parent === void 0 ? void 0 : parent.title.substring(title.length - 80, title.length) : '';
+    const parentTitleToUse = (parent === null || parent === void 0 ? void 0 : parent.title) ? parent === null || parent === void 0 ? void 0 : parent.title.substring((parent === null || parent === void 0 ? void 0 : parent.title.length) - 80, parent === null || parent === void 0 ? void 0 : parent.title.length) : '';
     return ((parent === null || parent === void 0 ? void 0 : parent.title) ? parentTitleToUse + ' > ' : '') + titleToUse;
 }
 exports.getTestTitle = getTestTitle;

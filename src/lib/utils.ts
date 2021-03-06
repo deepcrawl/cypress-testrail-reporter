@@ -20,6 +20,6 @@ export function containsCloseRunFlag(title: string) {
 
 export function getTestTitle(title, parent) {
     const titleToUse = title.substring(title.length - 140, title.length);
-    const parentTitleToUse = parent?.title ? parent?.title.substring(title.length - 80, title.length) : '';
+    const parentTitleToUse = parent?.title ? parent?.title.substring(parent?.title.length - 80, parent?.title.length) : '';
     return ( parent?.title ? parentTitleToUse + ' > ' : '' ) + titleToUse;
 }
