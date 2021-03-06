@@ -117,7 +117,7 @@ export class TestRail {
     if (this.sections.length <= 0) {
       await this.loadAllSections();
     } 
-    
+
     try {
       const res = await this.makeAxiosRequest(
         'post', 
@@ -133,6 +133,10 @@ export class TestRail {
   public async publishResult(testTitle: string, result: TestRailResult){
 
     if (containesNoReportFlag(testTitle)) return;
+
+    if (this.cases.length <= 0) {
+      await this.loadAllTestCases();
+    }
 
     const testAlreadyHasTestCase = this.cases.filter((c) => c.title === testTitle)
 

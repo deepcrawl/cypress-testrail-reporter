@@ -141,6 +141,9 @@ class TestRail {
         return __awaiter(this, void 0, void 0, function* () {
             if (utils_1.containesNoReportFlag(testTitle))
                 return;
+            if (this.cases.length <= 0) {
+                yield this.loadAllTestCases();
+            }
             const testAlreadyHasTestCase = this.cases.filter((c) => c.title === testTitle);
             let newCase;
             if (testAlreadyHasTestCase.length <= 0) {
