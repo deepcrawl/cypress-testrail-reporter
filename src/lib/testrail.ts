@@ -117,6 +117,7 @@ export class TestRail {
     if (this.sections.length <= 0) {
       await this.loadAllSections();
     } 
+    
     try {
       const res = await this.makeAxiosRequest(
         'post', 
