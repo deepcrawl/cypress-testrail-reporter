@@ -22,11 +22,9 @@ function containsCloseRunFlag(title) {
 }
 exports.containsCloseRunFlag = containsCloseRunFlag;
 function getTestTitle(title, parent) {
-    let newTitle = (parent === null || parent === void 0 ? void 0 : parent.title) ? parent.title + ' > ' : '';
-    // max title is 240 characters
-    newTitle = newTitle + title;
-    newTitle = newTitle.substring(newTitle.length - 240, newTitle.length);
-    return newTitle;
+    const titleToUse = title.substring(title.length - 140, title.length);
+    const parentTitleToUse = (parent === null || parent === void 0 ? void 0 : parent.title) ? parent === null || parent === void 0 ? void 0 : parent.title.substring(title.length - 80, title.length) : '';
+    return ((parent === null || parent === void 0 ? void 0 : parent.title) ? parentTitleToUse + ' > ' : '') + titleToUse;
 }
 exports.getTestTitle = getTestTitle;
 //# sourceMappingURL=utils.js.map
