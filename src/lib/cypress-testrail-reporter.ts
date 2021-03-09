@@ -23,7 +23,8 @@ export class CypressTestRailReporter extends reporters.Spec {
   constructor(runner: any, options: { reporterOptions: TestRailOptions}) {
     super(runner);
 
-    this.options = options.reporterOptions;
+    this.options = this.overrideOptionsWithEnvironment(options.reporterOptions);
+
     this.testRail = new TestRail(this.options);
     this.validateOptions(this.options)
 
@@ -83,12 +84,27 @@ export class CypressTestRailReporter extends reporters.Spec {
     });
   }
 
+
+  private overrideOptionsWithEnvironment(options: TestRailOptions) {
+    const newOptions: TestRailOptions = {
+      host: process.env.CYPRESS_TESTRAIL_REPORTER_HOST ? process.env.CYPRESS_TESTRAIL_REPORTER_HOST : options.host,
+      password: process.env.CYPRESS_TESTRAIL_REPORTER_PASSWORD ? process.env.CYPRESS_TESTRAIL_REPORTER_PASSWORD : options.password,
+      username: process.env.CYPRESS_TESTRAIL_REPORTER_USERNAME ? process.env.CYPRESS_TESTRAIL_REPORTER_USERNAME : options.username,
+      projectId: process.env.CYPRESS_TESTRAIL_REPORTER_PROJECT_ID ? Number(process.env.CYPRESS_TESTRAIL_REPORTER_PROJECT_ID) : options.projectId,
+      runIdFileLocation: process.env.CYPRESS_TESTRAIL_REPORTER_RUN_ID_FILE_LOCATION ? process.env.CYPRESS_TESTRAIL_REPORTER_RUN_ID_FILE_LOCATION : options.runIdFileLocation,
+      suiteId: process.env.CYPRESS_TESTRAIL_REPORTER_SUITE_ID ? Number(process.env.CYPRESS_TESTRAIL_REPORTER_SUITE_ID) : options.suiteId,
+      filter: process.env.CYPRESS_TESTRAIL_REPORTER_FILTER ? process.env.CYPRESS_TESTRAIL_REPORTER_FILTER : options.filter,
+      groupId: process.env.CYPRESS_TESTRAIL_REPORTER_GROUP_ID ? Number(process.env.CYPRESS_TESTRAIL_REPORTER_GROUP_ID) : options.groupId,
+    };
+    return options;
+  }
+
   private async evaluateGlobalCommandsFromTitle(test: any) {
     containsCloseRunFlag(test.title) && await this.testRail.closeRun();
   }
 
   private validateOptions(reporterOptions: TestRailOptions) {
-    this.validate(reporterOptions, 'host',);
+    this.validate(reporterOptions, 'host');
     this.validate(reporterOptions, 'username'); 
     this.validate(reporterOptions, 'password');
     this.validate(reporterOptions, 'projectId');
