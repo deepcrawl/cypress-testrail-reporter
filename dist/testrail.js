@@ -175,6 +175,12 @@ class TestRail {
                 if (customStatusId !== null) {
                     resultToPush.status_id = customStatusId;
                 }
+                else {
+                    console.log('\n', chalk_1.default.magenta.bold(`Testrail reporter: Try to push outcome of test with a custom status ${resultToPush.status_id} but no such status found in the statuses.`));
+                    console.log(chalk_1.default.magenta(`Testrail reporter: Status found: ${this.statuses.map((status) => status.name).join(', ')}`));
+                    console.log('\n');
+                    return;
+                }
             }
             try {
                 const response = yield this.makeAxiosRequest('post', `${this.base}/add_result_for_case/${this.runId}/${caseId}`, JSON.stringify(Object.assign({}, resultToPush)));

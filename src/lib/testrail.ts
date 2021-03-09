@@ -164,11 +164,16 @@ export class TestRail {
 
     const caseId:number = testAlreadyHasTestCase.length > 0 ? testAlreadyHasTestCase[0].id : newCase.id;
 
-    if (this.isStatusCustomStatus(resultToPush.status_id) && this.statuses.length <= 0) {
+    if ( this.isStatusCustomStatus(resultToPush.status_id) && this.statuses.length <= 0) {
       await this.loadStatuses();
       const customStatusId = this.getCustomStatus(resultToPush.status_id);
       if ( customStatusId !== null) {
         resultToPush.status_id = customStatusId;
+      } else {
+        console.log('\n', chalk.magenta.bold(`Testrail reporter: Try to push outcome of test with a custom status ${resultToPush.status_id} but no such status found in the statuses.`));
+        console.log(chalk.magenta(`Testrail reporter: Status found: ${this.statuses.map((status) => status.name).join(', ')}`))
+        console.log('\n');
+        return;
       }
     }
 
