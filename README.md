@@ -31,7 +31,7 @@ Add reporter to your `cypress.json`:
   "suiteId": 1,
   "runIdFileLocation": "myFile.txt",
   "environmentName": <string>,
-  "cypressProjectId?": <string>
+  "cypressProjectId": <string>
 }
 ```
 
@@ -73,15 +73,11 @@ describe("Test Rail synchronization test", function () {
 
 **password**: _string_ password or the API key for the aforementioned user.
 
-**projectId**: _number_ project with which the tests are associated.
+**projectId**: _number_ project with which the tests are associated in Test Rail.
 
 **runIdFileLocation**: _string_ name of the file from where the runId should be taken as a priority. If no such file exists than new run will be created and this file will be overrided and the content of the file will be just id of the run. ( This is a solution for cypress to not to create run for each test suite file. )
 
 **suiteId**: _number_ suite with which the tests are associated.
-
-**groupId**: _string_ (optional: needs "includeAllInTestRun": false ) The ID of the section/group
-
-**filter**: _string_ (optional: needs "includeAllInTestRun": false) Only return cases with matching filter string in the case title
 
 ## TestRail Settings
 
@@ -95,7 +91,6 @@ You can read the whole TestRail documentation [here](http://docs.gurock.com/).
 
 ## Author
 
-Milutin Savovic - [github](https://github.com/mickosav)
 Deepcrawl internal copy!
 
 ## License
