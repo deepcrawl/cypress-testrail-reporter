@@ -65,21 +65,21 @@ describe("Test Rail synchronization test", function () {
 
 ## Reporter Options
 
-**host**: (`CYPRESS_TESTRAIL_REPORTER_HOST`) _string_ host of your TestRail instance (e.g. for a hosted instance _https://instance.testrail.com_).
+**host**: _string_ host of your TestRail instance (e.g. for a hosted instance _https://instance.testrail.com_).
 
-**username**: (`CYPRESS_TESTRAIL_REPORTER_USERNAME`) _string_ email of the user under which the test run will be created.
+**username**: _string_ email of the user under which the test run will be created.
 
-**password**: (`CYPRESS_TESTRAIL_REPORTER_PASSWORD`) _string_ password or the API key for the aforementioned user.
+**password**: _string_ password or the API key for the aforementioned user.
 
-**projectId**: (`CYPRESS_TESTRAIL_REPORTER_PROJECT_ID`) _number_ project with which the tests are associated.
+**projectId**: _number_ project with which the tests are associated.
 
-**runIdFileLocation**: (`CYPRESS_TESTRAIL_REPORTER_RUN_ID_FILE_LOCATION`) _string_ name of the file from where the runId should be taken as a priority. If no such file exists than new run will be created and this file will be overrided and the content of the file will be just id of the run. ( This is a solution for cypress to not to create run for each test suite file. )
+**runIdFileLocation**: _string_ name of the file from where the runId should be taken as a priority. If no such file exists than new run will be created and this file will be overrided and the content of the file will be just id of the run. ( This is a solution for cypress to not to create run for each test suite file. )
 
-**suiteId**: (`CYPRESS_TESTRAIL_REPORTER_SUITE_ID`) _number_ suite with which the tests are associated.
+**suiteId**: _number_ suite with which the tests are associated.
 
-**groupId**: (`CYPRESS_TESTRAIL_REPORTER_GROUP_ID`) _string_ (optional: needs "includeAllInTestRun": false ) The ID of the section/group
+**groupId**: _string_ (optional: needs "includeAllInTestRun": false ) The ID of the section/group
 
-**filter**: (`CYPRESS_TESTRAIL_REPORTER_FILTER`) _string_ (optional: needs "includeAllInTestRun": false) Only return cases with matching filter string in the case title
+**filter**: _string_ (optional: needs "includeAllInTestRun": false) Only return cases with matching filter string in the case title
 
 ## TestRail Settings
 
