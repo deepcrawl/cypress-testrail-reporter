@@ -4,7 +4,6 @@ export interface TestRailOptions {
   password: string;
   projectId: number;
   suiteId: number;
-  assignedToId?: number;
   groupId?: number;
   filter?: string;
   runIdFileLocation: string;

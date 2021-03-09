@@ -1,7 +1,7 @@
 import { reporters } from 'mocha';
 import * as moment from 'moment';
 import { TestRail } from './testrail';
-import { Status } from './testrail.interface';
+import { Status, TestRailOptions } from './testrail.interface';
 import { containsCloseRunFlag, getTestTitle } from './utils';
 const Mocha = require('mocha');
 var fs = require('fs');
@@ -18,24 +18,21 @@ const {
 
 export class CypressTestRailReporter extends reporters.Spec {
   private testRail: TestRail;
+  private options: TestRailOptions;
 
-  constructor(runner: any, options: any) {
+  constructor(runner: any, options: { reporterOptions: TestRailOptions}) {
     super(runner);
 
-    let reporterOptions = options.reporterOptions;
+    this.options = this.overrideOptionsWithEnvironment(options.reporterOptions);
 
-    if (process.env.CYPRESS_TESTRAIL_REPORTER_PASSWORD) {
-      reporterOptions.password = process.env.CYPRESS_TESTRAIL_REPORTER_PASSWORD;
-    }
-
-    this.testRail = new TestRail(reporterOptions);
-    this.validateOptions(reporterOptions)
+    this.testRail = new TestRail(this.options);
+    this.validateOptions(this.options)
 
     runner.on(EVENT_RUN_BEGIN, async () => {
       const executionDateTime = moment().format('MMM Do YYYY, HH:mm (Z)');
       const name = `Automated test run ${executionDateTime}`;
       const description = 'For the Cypress run visit https://dashboard.cypress.io/#/projects/runs';
-      fs.readFile(reporterOptions.runIdFileLocation, (err, data) => {
+      fs.readFile(this.options.runIdFileLocation, (err, data) => {
        if (data) {
         this.testRail.saveRunId(data);
        } else {
@@ -87,11 +84,26 @@ export class CypressTestRailReporter extends reporters.Spec {
     });
   }
 
+
+  private overrideOptionsWithEnvironment(options: TestRailOptions) {
+    const newOptions: TestRailOptions = {
+      host: process.env.CYPRESS_TESTRAIL_REPORTER_HOST ? process.env.CYPRESS_TESTRAIL_REPORTER_HOST : options.host,
+      password: process.env.CYPRESS_TESTRAIL_REPORTER_PASSWORD ? process.env.CYPRESS_TESTRAIL_REPORTER_PASSWORD : options.password,
+      username: process.env.CYPRESS_TESTRAIL_REPORTER_USERNAME ? process.env.CYPRESS_TESTRAIL_REPORTER_USERNAME : options.username,
+      projectId: process.env.CYPRESS_TESTRAIL_REPORTER_PROJECT_ID ? Number(process.env.CYPRESS_TESTRAIL_REPORTER_PROJECT_ID) : options.projectId,
+      runIdFileLocation: process.env.CYPRESS_TESTRAIL_REPORTER_RUN_ID_FILE_LOCATION ? process.env.CYPRESS_TESTRAIL_REPORTER_RUN_ID_FILE_LOCATION : options.runIdFileLocation,
+      suiteId: process.env.CYPRESS_TESTRAIL_REPORTER_SUITE_ID ? Number(process.env.CYPRESS_TESTRAIL_REPORTER_SUITE_ID) : options.suiteId,
+      filter: process.env.CYPRESS_TESTRAIL_REPORTER_FILTER ? process.env.CYPRESS_TESTRAIL_REPORTER_FILTER : options.filter,
+      groupId: process.env.CYPRESS_TESTRAIL_REPORTER_GROUP_ID ? Number(process.env.CYPRESS_TESTRAIL_REPORTER_GROUP_ID) : options.groupId,
+    };
+    return options;
+  }
+
   private async evaluateGlobalCommandsFromTitle(test: any) {
     containsCloseRunFlag(test.title) && await this.testRail.closeRun();
   }
 
-  private validateOptions(reporterOptions) {
+  private validateOptions(reporterOptions: TestRailOptions) {
     this.validate(reporterOptions, 'host');
     this.validate(reporterOptions, 'username');
     this.validate(reporterOptions, 'password');
@@ -101,11 +113,8 @@ export class CypressTestRailReporter extends reporters.Spec {
   }
 
   private validate(options, name: string) {
-    if (options == null) {
-      throw new Error('Missing reporterOptions in cypress.json');
-    }
     if (options[name] == null) {
-      throw new Error(`Missing ${name} value. Please update reporterOptions in cypress.json`);
+      throw new Error(`Missing ${name} value. Please update reporterOptions in cypress.json or add it to a environmental variables.`);
     }
   }
 }
