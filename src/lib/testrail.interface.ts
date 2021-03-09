@@ -7,6 +7,8 @@ export interface TestRailOptions {
   groupId?: number;
   filter?: string;
   runIdFileLocation: string;
+  environmentName: string;
+  cypressProjectId: string;
 }
 
 export enum Status {

@@ -10,8 +10,8 @@
     "reporter"
   ],
   "author": {
-    "name": "Milutin Savovic -> Deepcrawl",
-    "email": "mickosavovic@gmail.com"
+    "name": "Deepcrawl",
+    "email": "lukaskalcok@gmail.com"
   },
   "engines": {
     "node": ">=10",

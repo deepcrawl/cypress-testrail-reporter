@@ -29,7 +29,9 @@ Add reporter to your `cypress.json`:
   "password": "password",
   "projectId": 1,
   "suiteId": 1,
-  "runIdFileLocation": "myFile.txt"
+  "runIdFileLocation": "myFile.txt",
+  "environmentName": <string>,
+  "cypressProjectId?": <string>
 }
 ```
 

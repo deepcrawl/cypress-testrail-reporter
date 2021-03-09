@@ -27,8 +27,8 @@ class CypressTestRailReporter extends mocha_1.reporters.Spec {
         this.validateOptions(this.options);
         runner.on(EVENT_RUN_BEGIN, () => __awaiter(this, void 0, void 0, function* () {
             const executionDateTime = moment().format('MMM Do YYYY, HH:mm (Z)');
-            const name = `Automated test run ${executionDateTime}`;
-            const description = 'For the Cypress run visit https://dashboard.cypress.io/#/projects/runs';
+            const name = `Automated test run on ${this.options.environmentName} at ${executionDateTime}`;
+            const description = this.options.cypressProjectId ? `For the Cypress run visit https://dashboard.cypress.io/projects/${this.options.cypressProjectId}/runs` : `https://dashboard.cypress.io/`;
             fs.readFile(this.options.runIdFileLocation, (err, data) => {
                 if (data) {
                     this.testRail.saveRunId(data);
@@ -78,6 +78,7 @@ class CypressTestRailReporter extends mocha_1.reporters.Spec {
         this.validate(reporterOptions, 'projectId');
         this.validate(reporterOptions, 'suiteId');
         this.validate(reporterOptions, 'runIdFileLocation');
+        this.validate(reporterOptions, 'environmentName');
     }
     validate(options, name) {
         if (options[name] == null) {

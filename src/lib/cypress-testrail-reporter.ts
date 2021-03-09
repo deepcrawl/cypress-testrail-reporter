@@ -30,8 +30,8 @@ export class CypressTestRailReporter extends reporters.Spec {
 
     runner.on(EVENT_RUN_BEGIN, async () => {
       const executionDateTime = moment().format('MMM Do YYYY, HH:mm (Z)');
-      const name = `Automated test run ${executionDateTime}`;
-      const description = 'For the Cypress run visit https://dashboard.cypress.io/#/projects/runs';
+      const name = `Automated test run on ${this.options.environmentName} at ${executionDateTime}`;
+      const description = this.options.cypressProjectId ? `For the Cypress run visit https://dashboard.cypress.io/projects/${this.options.cypressProjectId}/runs` : `https://dashboard.cypress.io/`;
       fs.readFile(this.options.runIdFileLocation, (err, data) => {
        if (data) {
         this.testRail.saveRunId(data);
@@ -95,6 +95,7 @@ export class CypressTestRailReporter extends reporters.Spec {
     this.validate(reporterOptions, 'projectId');
     this.validate(reporterOptions, 'suiteId');
     this.validate(reporterOptions, 'runIdFileLocation');
+    this.validate(reporterOptions, 'environmentName');
   }
 
   private validate(options, name: string) {
