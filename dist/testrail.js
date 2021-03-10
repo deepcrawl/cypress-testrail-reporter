@@ -20,6 +20,7 @@ class TestRail {
         this.options = options;
         this.cases = [];
         this.sections = [];
+        this.statuses = [];
         this.base = `${options.host}/index.php?/api/v2`;
     }
     initialize() {
@@ -32,6 +33,22 @@ class TestRail {
         return __awaiter(this, void 0, void 0, function* () {
             this.runId = id;
             yield this.initialize();
+        });
+    }
+    getStatuses() {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const response = yield this.makeAxiosRequest('get', `${this.base}/get_statuses`);
+                return response.data;
+            }
+            catch (e) {
+                console.error(e);
+            }
+        });
+    }
+    loadStatuses() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.statuses = yield this.getStatuses();
         });
     }
     getRequestHeader() {
@@ -139,6 +156,7 @@ class TestRail {
     }
     publishResult(testTitle, result) {
         return __awaiter(this, void 0, void 0, function* () {
+            const resultToPush = Object.assign({}, result);
             if (utils_1.containesNoReportFlag(testTitle))
                 return;
             if (this.cases.length <= 0) {
@@ -151,15 +169,25 @@ class TestRail {
                 console.log('\n', chalk_1.default.magenta.bold(`Testrail reporter: Created a new test case: ${testTitle} with case id: ${newCase.id}`));
             }
             const caseId = testAlreadyHasTestCase.length > 0 ? testAlreadyHasTestCase[0].id : newCase.id;
-            try {
-                // no need to push untested result as it is a default status.
-                if (result.status_id !== testrail_interface_1.Status.Untested) {
-                    const response = yield this.makeAxiosRequest('post', `${this.base}/add_result_for_case/${this.runId}/${caseId}`, JSON.stringify(Object.assign({}, result)));
-                    console.log('\n', chalk_1.default.magenta.bold(`Testrail reporter: Outcome of following test cases saved in TestRail run with id:${this.runId}`));
-                    console.log(chalk_1.default.magenta(`Test case ${caseId} with status id: ${result.status_id}`));
-                    console.log('\n');
-                    return response;
+            if (this.isStatusCustomStatus(resultToPush.status_id) && this.statuses.length <= 0) {
+                yield this.loadStatuses();
+                const customStatusId = this.getCustomStatus(resultToPush.status_id);
+                if (customStatusId !== null) {
+                    resultToPush.status_id = customStatusId;
                 }
+                else {
+                    console.log('\n', chalk_1.default.magenta.bold(`Testrail reporter: Try to push outcome of test with a custom status ${resultToPush.status_id} but no such status found in the statuses.`));
+                    console.log(chalk_1.default.magenta(`Testrail reporter: Status found: ${this.statuses.map((status) => status.name).join(', ')}`));
+                    console.log('\n');
+                    return;
+                }
+            }
+            try {
+                const response = yield this.makeAxiosRequest('post', `${this.base}/add_result_for_case/${this.runId}/${caseId}`, JSON.stringify(Object.assign({}, resultToPush)));
+                console.log('\n', chalk_1.default.magenta.bold(`Testrail reporter: Outcome of following test cases saved in TestRail run with id:${this.runId}`));
+                console.log(chalk_1.default.magenta(`Test case ${caseId} with status id: ${resultToPush.status_id}`));
+                console.log('\n');
+                return response;
             }
             catch (e) {
                 console.error(e);
@@ -178,6 +206,15 @@ class TestRail {
                 console.error(e);
             }
         });
+    }
+    isStatusCustomStatus(status) {
+        return status === testrail_interface_1.CustomStatus.Skipped;
+    }
+    getCustomStatus(customStatus) {
+        const possibleSkippedStatuses = this.statuses.filter((status) => {
+            status.label === customStatus;
+        });
+        return possibleSkippedStatuses.length >= 0 ? possibleSkippedStatuses[0].id : null;
     }
 }
 exports.TestRail = TestRail;

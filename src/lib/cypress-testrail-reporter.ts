@@ -1,7 +1,7 @@
 import { reporters } from 'mocha';
 import * as moment from 'moment';
 import { TestRail } from './testrail';
-import { Status, TestRailOptions } from './testrail.interface';
+import { CustomStatus, Status, TestRailOptions } from './testrail.interface';
 import { containsCloseRunFlag, getTestTitle } from './utils';
 const Mocha = require('mocha');
 var fs = require('fs');
@@ -57,7 +57,7 @@ export class CypressTestRailReporter extends reporters.Spec {
       return this.testRail.publishResult(
         getTestTitle(test.title, test.parent), 
         {
-          status_id: Status.Untested,
+          status_id: CustomStatus.Skipped,
           comment: `Execution time: ${test.duration}ms`,
           elapsed: `${test.duration/1000}s`
         }

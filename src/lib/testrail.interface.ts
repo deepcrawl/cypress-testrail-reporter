@@ -19,8 +19,12 @@ export enum Status {
   Failed = 5,
 }
 
+export enum CustomStatus {
+  Skipped = 'skipped'
+}
+
 export interface TestRailResult {
-  status_id: Status;
+  status_id: Status | CustomStatus;
   comment?: String;
   elapsed?: String;
 }
@@ -57,4 +61,16 @@ export interface TestRailSection {
   parent_id: string | null;
   display_order: number;
   depth: number;
+}
+
+export interface TestRailStatus {
+  color_bright: number;
+  color_dark: number;
+  color_medium: number,
+  id: Status;
+  is_final: boolean;
+  is_system: boolean;
+  is_untested: boolean;
+  label: string;
+  name: string;
 }

@@ -47,7 +47,7 @@ class CypressTestRailReporter extends mocha_1.reporters.Spec {
         }));
         runner.on(EVENT_TEST_PENDING, (test) => __awaiter(this, void 0, void 0, function* () {
             return this.testRail.publishResult(utils_1.getTestTitle(test.title, test.parent), {
-                status_id: testrail_interface_1.Status.Untested,
+                status_id: testrail_interface_1.CustomStatus.Skipped,
                 comment: `Execution time: ${test.duration}ms`,
                 elapsed: `${test.duration / 1000}s`
             });
