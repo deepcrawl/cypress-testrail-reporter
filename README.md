@@ -22,7 +22,7 @@ Add reporter to your `cypress.json`:
 
 ```json
 ...
-"reporter": "cypress-testrail-reporter",
+"reporter": "@deepcrawl/cypress-testrail-reporter",
 "reporterOptions": {
   "host": "https://yourdomain.testrail.com",
   "username": "username",
@@ -35,7 +35,7 @@ Add reporter to your `cypress.json`:
 }
 ```
 
-This reporter automatically looks for a test case with same name and if there is one it uploads the results. If there is no sucha a test case it will make new one and then upload the results.
+This reporter automatically looks for a test case with same name and if there is one it uploads the results. If there is no such test case it will make new one and then upload the results.
 
 ### COMMANDS
 
